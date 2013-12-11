@@ -10,6 +10,14 @@ enum BoardState {
 class Location {
 	public int i;
 	public int j;
+	public Location() {
+		i = j = 0;
+	}
+	
+	public Location(int i, int j) {
+		this.i = i;
+		this.j = j;
+	}
 }
 
 public class Board {
@@ -37,6 +45,9 @@ public class Board {
 	}
 	
 	public void placeAtLocation(int i, int j, BoardState state) {
+		if (i < 0 || j < 0 || i >= BOARD_SIZE || j>= BOARD_SIZE) {
+			throw new IllegalArgumentException("(" + i + ", " + j + ") was out of bound");
+		}
 		if (board[i][j] != BoardState.EMPTY) {
 			throw new IllegalArgumentException("(" + i + ", " + j + ") was occupied");
 		}

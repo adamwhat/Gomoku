@@ -12,7 +12,7 @@ public class GomokuAI {
 		myIdentity = me;
 	}
 	
-	public BoardState opponentOf(BoardState x) {
+	public static BoardState opponentOf(BoardState x) {
 		if (x == BoardState.BLACK) {
 			return BoardState.WHITE;
 		}
@@ -26,6 +26,7 @@ public class GomokuAI {
 		return null;
 	}
 	public Location calculateNextMove(Board board, Location opponentMove) {
+		// TODO opponentMove could be null
 		double maximum_score = Double.NEGATIVE_INFINITY;
 		Location maximum_loc = null;
 		for (Location l : getFeasibleLocations(board, MAX_CANDIDATE_LOCATIONS)) {
