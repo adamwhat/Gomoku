@@ -27,20 +27,15 @@ class GomokuPanel extends JPanel {
 	private final int MARGIN = 2;
 	private final double PIECE_FRAC = 0.9;
 
-	private int size;
 	private Board state;
 	private BoardState next;
 
 	public GomokuPanel() {
-		this(Board.BOARD_SIZE);
-	}
-
-	public GomokuPanel(int size) {
 		super();
-		this.size = size;
 		state = new Board();
 		next = BoardState.BLACK;
 		addMouseListener(new GomokuListener());
+		// addActionListener(new ActionListener());
 	}
 
 	class GomokuListener extends MouseAdapter {
@@ -48,7 +43,7 @@ class GomokuPanel extends JPanel {
 			double panelWidth = getWidth();
 			double panelHeight = getHeight();
 			double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
-			double squareWidth = boardWidth / size;
+			double squareWidth = boardWidth / Board.BOARD_SIZE;
 			double pieceDiameter = PIECE_FRAC * squareWidth;
 			double xLeft = (panelWidth - boardWidth) / 2 + MARGIN;
 			double yTop = (panelHeight - boardWidth) / 2 + MARGIN;
@@ -76,15 +71,15 @@ class GomokuPanel extends JPanel {
 		g2.fill(new Rectangle2D.Double(0, 0, panelWidth, panelHeight));
 
 		double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
-		double squareWidth = boardWidth / size;
-		double gridWidth = (size - 1) * squareWidth;
+		double squareWidth = boardWidth / Board.BOARD_SIZE;
+		double gridWidth = (Board.BOARD_SIZE - 1) * squareWidth;
 		double pieceDiameter = PIECE_FRAC * squareWidth;
 		boardWidth -= pieceDiameter;
 		double xLeft = (panelWidth - boardWidth) / 2 + MARGIN;
 		double yTop = (panelHeight - boardWidth) / 2 + MARGIN;
 
 		g2.setColor(Color.BLACK);
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < Board.BOARD_SIZE; i++) {
 			double offset = i * squareWidth;
 			g2.draw(new Line2D.Double(xLeft, yTop + offset, xLeft + gridWidth,
 					yTop + offset));
@@ -92,8 +87,8 @@ class GomokuPanel extends JPanel {
 					yTop + gridWidth));
 		}
 
-		for (int row = 0; row < size; row++)
-			for (int col = 0; col < size; col++) {
+		for (int row = 0; row < Board.BOARD_SIZE; row++)
+			for (int col = 0; col < Board.BOARD_SIZE; col++) {
 				BoardState piece = state.getLocation(row, col);
 				if (piece != BoardState.EMPTY) {
 					Color c = (piece == BoardState.BLACK) ? Color.BLACK : Color.WHITE;
