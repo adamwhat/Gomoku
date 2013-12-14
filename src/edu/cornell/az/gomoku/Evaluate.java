@@ -91,9 +91,10 @@ public class Evaluate {
 		if (Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY) empty++;
 		// for (i = 1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY; i++, empty++);
 		// for (i = -1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY; i--, empty++);
+		/*
 		if (piece < 5 && !makeSense(b, loc, dx, dy, myIdentity)) {
 			return new BoardStats(0, 1);
-		}
+		}*/
 		return new BoardStats(piece, empty);
 	}
 	

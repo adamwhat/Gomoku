@@ -31,8 +31,15 @@ public class MainGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.clearBoard();
-				panel.repaint();
 			}});
+		JButton constructBoardButton = new JButton("Construct");
+		constructBoardButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String s = JOptionPane.showInputDialog("Input Board String");
+				panel.constructBoardFromString(s);
+			}
+		});
 		
 		JCheckBox cbox = new JCheckBox("Test Mode");
 		cbox.addItemListener(new ItemListener() {
@@ -46,6 +53,7 @@ public class MainGUI {
 		side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
 		side.add(saveButton);
 		side.add(clearButton);
+		side.add(constructBoardButton);
 		side.add(cbox);
 		
 		JPanel totalPanel = new JPanel();
@@ -87,6 +95,11 @@ class GomokuPanel extends JPanel {
 		return testMode;
 	}
 	
+	public void constructBoardFromString(String cmd) {
+		Board.setBoard(board, cmd);
+		repaint();
+	}
+
 	public void setTestMode(boolean testMode) {
 		this.testMode = testMode;
 	}
@@ -97,6 +110,7 @@ class GomokuPanel extends JPanel {
 
 	public void clearBoard() {
 		board.clear();
+		repaint();
 	}
 
 	class AIWorker extends SwingWorker<Boolean, String> {

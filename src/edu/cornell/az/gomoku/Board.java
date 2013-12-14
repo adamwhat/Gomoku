@@ -36,6 +36,11 @@ public class Board {
 		}
 	}
 	
+	public Board(String cmd) {
+		this();
+		Board.setBoard(this, cmd);
+	}
+	
 	public BoardState getLocation(int i, int j) {
 		return board[i][j]; 
 	}
