@@ -68,7 +68,6 @@ class GomokuPanel extends JPanel {
 		@Override
 		protected void done() {
 			working = false;
-			System.out.println("I'm done!");
 			repaint();
 		}
 	}
@@ -76,11 +75,9 @@ class GomokuPanel extends JPanel {
 	class GomokuListener extends MouseAdapter {
 
 		public void mouseReleased(MouseEvent e) {
-
 			if (working) {
 				return;
 			}
-
 			double panelWidth = getWidth();
 			double panelHeight = getHeight();
 			double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
