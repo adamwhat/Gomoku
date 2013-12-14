@@ -88,6 +88,21 @@ public class Board {
 			Arrays.fill(board[i], BoardState.EMPTY);
 		}
     }
+	
+	public static void setBoard(Board b, String cmd) {
+		String[] t = cmd.trim().split(";");
+		for(String s : t) {
+			String[] p = s.trim().split(",");
+			if (p.length <= 1) {
+				continue;
+			}
+			assert(p.length == 3);
+			assert(p[2].toUpperCase().equals("B") || p[2].toUpperCase().equals("W"));
+			b.placeAtLocation(Integer.parseInt(p[0].trim()),
+							  Integer.parseInt(p[1].trim()), 
+							  p[2].toUpperCase().equals("B")?BoardState.BLACK:BoardState.WHITE);
+		}
+	}
 
 	@Override
 	public String toString() {

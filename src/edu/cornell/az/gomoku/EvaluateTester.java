@@ -6,20 +6,6 @@ import org.junit.Test;
 
 public class EvaluateTester {
 
-	private static void setBoard(Board b, String cmd) {
-		String[] t = cmd.trim().split(";");
-		for(String s : t) {
-			String[] p = s.trim().split(",");
-			if (p.length <= 1) {
-				continue;
-			}
-			assert(p.length == 3);
-			assert(p[2].toUpperCase().equals("B") || p[2].toUpperCase().equals("W"));
-			b.placeAtLocation(Integer.parseInt(p[0].trim()),
-							  Integer.parseInt(p[1].trim()), 
-							  p[2].toUpperCase().equals("B")?BoardState.BLACK:BoardState.WHITE);
-		}
-	}
 	@Test
 	public void testCountHorizontal() {
 		Board b = new Board();
@@ -47,7 +33,7 @@ public class EvaluateTester {
 	@Test
 	public void testEvaluateDefault() {
 		Board b = new Board();
-		setBoard(b, "3,3,b; 3,4,w");
+		Board.setBoard(b, "3,3,b; 3,4,w");
 		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,3)));
 		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,4)));
 	}
@@ -59,14 +45,14 @@ public class EvaluateTester {
 	@Test
 	public void testMoreThanFive() {
 		Board b = new Board();
-		setBoard(b, "7,10,w;9,10,w;9,12,b;10,11,b;10,12,w;11,10,b;12,8,w;12,9,b;12,10,w;13,8,b;14,7,b;");
+		Board.setBoard(b, "7,10,w;9,10,w;9,12,b;10,11,b;10,12,w;11,10,b;12,8,w;12,9,b;12,10,w;13,8,b;14,7,b;");
 		assertAllEqual(b, new Location[]{new Location(9, 12),new Location(10, 11),new Location(11, 10),new Location(12, 9),new Location(13, 8),new Location(14, 7)}, 100000);
 	}
 	
 	@Test
 	public void testFiveConnect() {
 		Board b = new Board();
-		setBoard(b, "2,2,b; 3,3,b; 4,4,b; 5,5,b; 6,6,b;");
+		Board.setBoard(b, "2,2,b; 3,3,b; 4,4,b; 5,5,b; 6,6,b;");
 		assertEquals(100000, Evaluate.evaluateBoard(b, new Location(2, 2)));
 		assertEquals(100000, Evaluate.evaluateBoard(b, new Location(3, 3)));
 	}
@@ -74,7 +60,7 @@ public class EvaluateTester {
 	@Test
 	public void testLiveFour() {
 		Board b = new Board();
-		setBoard(b, "10,12,b;11,13,b;11,15,w;12,13,w;12,14,b;13,13,w;13,15,b;");
+		Board.setBoard(b, "10,12,b;11,13,b;11,15,w;12,13,w;12,14,b;13,13,w;13,15,b;");
 		assertAllEqual(b, new Location[]{
 				new Location(12, 14),
 				new Location(11, 13),
@@ -91,7 +77,7 @@ public class EvaluateTester {
 	@Test
 	public void testH2() {
 		Board b= new Board();
-		setBoard(b, "7,11,b;7,12,b;8,11,w;8,12,w;10,13,b;11,10,w;");
+		Board.setBoard(b, "7,11,b;7,12,b;8,11,w;8,12,w;10,13,b;11,10,w;");
 		assertEquals(5, Evaluate.evaluateBoard(b, new Location(7, 11)));
 		assertEquals(5, Evaluate.evaluateBoard(b, new Location(7, 12)));
 		assertEquals(5, Evaluate.evaluateBoard(b, new Location(8, 11)));
@@ -101,8 +87,7 @@ public class EvaluateTester {
 	@Test
 	public void testS2() {
 		Board b= new Board();
-		setBoard(b, )
-		
+		Board.setBoard(b, "3,10,w;4,8,b;4,9,w;4,10,b;4,11,w;5,10,b;");
 	}
 
 }
