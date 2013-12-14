@@ -11,9 +11,10 @@ public class GomokuAI {
 	private List<Location> moves = new ArrayList<>();
 	private int maxLevel = 3;
 	public static final int MAX_CANDIDATE_LOCATIONS = 10;
-	private volatile boolean drawPrunedTree = true;
-	private volatile boolean drawFullTree = true;
-
+	private volatile boolean draw = true;
+	private volatile boolean drawFullTree = false;
+	private List<Integer> shouldPrune = new LinkedList<>();
+	private int edgeStyleId;
 	UbigraphClient visualClient = new UbigraphClient();
 
 	public GomokuAI(BoardState me) {
@@ -46,7 +47,8 @@ public class GomokuAI {
 			int[] di = new int[] { -1, -1, -1, 0, 0, 1, 1, 1 };
 			int[] dj = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
 			for (int i = 0; i < 8; i++) {
-				if (board.onBoard(loc.i+di[i], loc.j + dj[i]) && !visited[loc.i + di[i]][loc.j + dj[i]]) {
+				if (board.onBoard(loc.i + di[i], loc.j + dj[i])
+						&& !visited[loc.i + di[i]][loc.j + dj[i]]) {
 					queue.add(new Location(loc.i + di[i], loc.j + dj[i]));
 				}
 			}
@@ -58,12 +60,12 @@ public class GomokuAI {
 	public Location calculateNextMove(Board board, Location opponentMove) {
 		// TODO opponentMove could be null
 		visualClient.clear();
-		int root_fulltree = 0, root_prunedtree = 0;
-		if (drawFullTree) {
-			root_fulltree = visualClient.newVertex();
-		}
-		if (drawPrunedTree) {
-			root_prunedtree = visualClient.newVertex();
+		edgeStyleId = visualClient.newEdgeStyle(0);
+		visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
+		visualClient.setEdgeStyleAttribute(edgeStyleId, "stroke", "dashed");
+		int root = 0;
+		if (draw) {
+			root = drawVertex(shapeFromTurn(myIdentity), "#FF0000", null);
 		}
 		double maximum_score = Double.NEGATIVE_INFINITY;
 		Location maximum_loc = null;
@@ -72,8 +74,7 @@ public class GomokuAI {
 			board.setLocation(l, myIdentity);
 			double score = evaluate(board, opponentOf(myIdentity),
 					opponentMove, Double.NEGATIVE_INFINITY,
-					Double.POSITIVE_INFINITY, maxLevel, root_fulltree,
-					root_prunedtree);
+					Double.POSITIVE_INFINITY, maxLevel, root);
 			if (score > maximum_score) {
 				maximum_score = score;
 				maximum_loc = l;
@@ -83,18 +84,43 @@ public class GomokuAI {
 		return maximum_loc;
 	}
 
-	private double evaluate(Board board, BoardState turn, Location lastMove,
-			double alpha, double beta, int level, int parent_full,
-			int parent_pruned) {
-		// Connect current node to parent
-		int current_node_full = parent_full, current_node_pruned = parent_pruned;
-		if (drawPrunedTree && alpha < beta) {
-			current_node_pruned = visualClient.newVertex();
-			visualClient.newEdge(parent_pruned, current_node_pruned);
+	private int drawVertex(String shape, String color, String label) {
+		int curNode = visualClient.newVertex();
+		if (shape != null)
+			visualClient.setVertexAttribute(curNode, "shape", shape);
+		if (color != null)
+			visualClient.setVertexAttribute(curNode, "color", color);
+		if (label != null)
+			visualClient.setVertexAttribute(curNode, "label", label);
+		return curNode;
+	}
+
+	private int createAndConnect(int parent, String shape, String color,
+			String label) {
+		int curNode = drawVertex(shape, color, label);
+		visualClient.changeEdgeStyle(visualClient.newEdge(parent, curNode),
+				edgeStyleId);
+		return curNode;
+	}
+
+	private String shapeFromTurn(BoardState turn) {
+		if (turn == myIdentity) {
+			return "cube";
+		} else {
+			return "sphere";
 		}
-		if (drawFullTree) {
-			current_node_full = visualClient.newVertex();
-			visualClient.newEdge(parent_full, current_node_full);
+	}
+
+	private double evaluate(Board board, BoardState turn, Location lastMove,
+			double alpha, double beta, int level, int parent) {
+		// Connect current node to parent
+		int currentNode = parent;
+		if (draw) {
+			currentNode = createAndConnect(currentNode, shapeFromTurn(turn),
+					null, null);
+			if (drawFullTree && alpha >= beta) {
+				shouldPrune.add(currentNode);
+			}
 		}
 		if (level == 0) {
 			return 0.0;
@@ -103,15 +129,16 @@ public class GomokuAI {
 			// Maximizer
 			for (Location l : getFeasibleLocations(board,
 					MAX_CANDIDATE_LOCATIONS, lastMove)) {
-				if (alpha >= beta && !drawFullTree) {
-					break;
+				if (alpha >= beta) {
+					if (!draw || !drawFullTree) {
+						break;
+					}
 				}
 				board.setLocation(l, turn);
 				alpha = Math.max(
 						alpha,
 						evaluate(board, opponentOf(turn), l, alpha, beta,
-								level - 1, current_node_full,
-								current_node_pruned));
+								level - 1, currentNode));
 				board.setLocation(l, BoardState.EMPTY);
 			}
 			return alpha;
@@ -126,8 +153,7 @@ public class GomokuAI {
 				beta = Math.min(
 						beta,
 						evaluate(board, opponentOf(turn), l, alpha, beta,
-								level - 1, current_node_full,
-								current_node_pruned));
+								level - 1, currentNode));
 				board.setLocation(l, BoardState.EMPTY);
 			}
 			return beta;
