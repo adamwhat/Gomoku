@@ -79,10 +79,13 @@ public class Evaluate {
 	public static BoardStats count(Board b, Location loc, int dx, int dy, BoardState myIdentity) {
 		int piece = 1;
 		int empty = 0;
-		for (int i = 1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == myIdentity; i++, piece++);
-		for (int i = -1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == myIdentity; i--, piece++);
-		for (int i = 1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY; i++, empty++);
-		for (int i = -1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY; i--, empty++);
+		int i = 0;
+		for (i = 1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == myIdentity; i++, piece++);
+		if (Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY) empty++;
+		for (i = -1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == myIdentity; i--, piece++);
+		if (Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY) empty++;
+		// for (i = 1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY; i++, empty++);
+		// for (i = -1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == BoardState.EMPTY; i--, empty++);
 		if (piece < 5 && !makeSense(b, loc, dx, dy, myIdentity)) {
 			return new BoardStats(0, 1);
 		}
