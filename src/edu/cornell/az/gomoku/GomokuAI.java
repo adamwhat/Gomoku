@@ -9,7 +9,7 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 6;
+	private int maxLevel = 3;
 	public static final int MAX_CANDIDATE_LOCATIONS = 10;
 	private volatile boolean drawPrunedTree = true;
 	private volatile boolean drawFullTree = true;
@@ -46,7 +46,7 @@ public class GomokuAI {
 			int[] di = new int[] { -1, -1, -1, 0, 0, 1, 1, 1 };
 			int[] dj = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
 			for (int i = 0; i < 8; i++) {
-				if (!visited[loc.i + di[i]][loc.j + dj[i]]) {
+				if (board.onBoard(loc.i+di[i], loc.j + dj[i]) && !visited[loc.i + di[i]][loc.j + dj[i]]) {
 					queue.add(new Location(loc.i + di[i], loc.j + dj[i]));
 				}
 			}

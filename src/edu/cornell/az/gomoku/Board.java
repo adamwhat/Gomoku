@@ -18,6 +18,10 @@ class Location {
 		this.i = i;
 		this.j = j;
 	}
+	
+	public String toString() {
+		return "Location: (" + i + ", " + j +")";
+	}
 }
 
 public class Board {
@@ -41,6 +45,7 @@ public class Board {
 	}
 	
 	public void setLocation(Location l, BoardState state) {
+		// System.out.println("Set (" + l.i + ", " + l.j + ") = " + state);
 		setLocation(l.i, l.j, state);
 	}
 	
@@ -59,6 +64,11 @@ public class Board {
 	}
 	
 	public void setLocation(int i, int j, BoardState state) {
+		if (state == BoardState.EMPTY) {
+			assert(board[i][j] != BoardState.EMPTY);
+		} else {
+			assert(board[i][j] == BoardState.EMPTY);
+		}
 		board[i][j] = state;
 	}
 }

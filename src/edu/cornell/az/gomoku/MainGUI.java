@@ -49,20 +49,18 @@ class GomokuPanel extends JPanel {
 		@Override
 		protected Boolean doInBackground() throws Exception {
 			try {
+				if (working) {
+					System.out.println("Error: Shouldn't populate a new thread.");
+					return false;
+				}
 				working = true;
-				// TODO: Finish this function
 				Location loc = gomokuAI.calculateNextMove(board, playerLastMove);
-				// Location loc = new Location(random.nextInt(19), random.nextInt(19));
-				/*
-				try {
-					//Thread.sleep(1000);
-				} catch (InterruptedException ie) {}
-				*/
 				board.placeAtLocation(loc.i, loc.j, GomokuAI.opponentOf(identity));
 				repaint();
 				return true;
 			} catch (Exception failure) {
 				working = false;
+				System.out.println(Arrays.toString(failure.getStackTrace()));
 				return false;
 			}
 		}
@@ -80,6 +78,7 @@ class GomokuPanel extends JPanel {
 			if (working) {
 				return;
 			}
+
 			double panelWidth = getWidth();
 			double panelHeight = getHeight();
 			double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
