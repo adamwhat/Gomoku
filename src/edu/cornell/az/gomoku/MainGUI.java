@@ -148,6 +148,7 @@ class GomokuPanel extends JPanel {
 			if (!testMode) {
 				new AIWorker().execute();
 			} else {
+				System.out.format("new Location(%d, %d),\n", row, col);
 				identity = Board.opponentOf(identity);
 			}
 		}
