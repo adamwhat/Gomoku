@@ -10,6 +10,9 @@ public class EvaluateTester {
 		String[] t = cmd.trim().split(";");
 		for(String s : t) {
 			String[] p = s.trim().split(",");
+			if (p.length <= 1) {
+				continue;
+			}
 			assert(p.length == 3);
 			assert(p[2].toUpperCase().equals("B") || p[2].toUpperCase().equals("W"));
 			b.placeAtLocation(Integer.parseInt(p[0].trim()),
@@ -42,6 +45,12 @@ public class EvaluateTester {
 		Board b = new Board();
 		setBoard(b, "3,3,b; 3,4,b");
 		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,3)));
+	}
+	
+	@Test
+	public void testFiveConnect() {
+		Board b = new Board();
+		setBoard(b, "2,2,b; 3,3,b; 4,4,b; 5,5,b; 6,6,b; 7,7,b;");
 	}
 
 }

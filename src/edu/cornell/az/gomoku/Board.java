@@ -81,4 +81,17 @@ public class Board {
 		}
 		board[i][j] = state;
 	}
+	
+	@Override
+	public String toString() {
+		String res = "";
+		for (int i=0;i<BOARD_SIZE;i++) {
+			for (int j=0;j<BOARD_SIZE;j++) {
+				if (board[i][j] != BoardState.EMPTY) {
+					res += String.format("%d,%d,%s;", i, j, board[i][j] == BoardState.BLACK ? "b" : "w");
+				}
+			}
+		}
+		return res;
+	}
 }
