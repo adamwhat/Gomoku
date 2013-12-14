@@ -55,9 +55,49 @@ public class EvaluateTester {
 		}, 10000);
 	}
 	
+	
 	@Test
 	public void testTwoDeadFour() {
-		
+		Board b = new Board();
+		Board.setBoard(b, "9,6,b;9,14,b;10,7,b;10,13,b;11,8,b;11,12,b;12,9,b;12,10,w;12,11,b;13,10,w;14,10,w;15,10,w;16,10,w;17,10,w;18,10,w;");
+		assertAllEqual(b, new Location[]{
+				new Location(12, 9),
+				new Location(12, 11),
+				new Location(11, 8),
+				new Location(11, 12),
+				new Location(10, 13),
+				new Location(10, 7),
+				new Location(9, 14),
+				new Location(9, 6)
+		}, 10000);
+	}
+	
+	@Test
+	public void testDeadFourLiveThree() {
+		Board b = new Board();
+		Board.setBoard(b, "5,9,w;5,11,w;6,10,w;7,9,w;7,11,w;8,8,w;9,6,b;9,7,b;9,8,b;9,9,b;10,8,b;");
+		assertAllEqual(b, new Location[]{
+				new Location(8, 8),
+				new Location(7, 9),
+				new Location(6, 10),
+				new Location(5, 11),
+				new Location(7, 11),
+				new Location(5, 9)
+		}, 10000);
+	}
+	
+	@Test
+	public void testTwoLiveThree() {
+		Board b = new Board();
+		Board.setBoard(b, "4,14,w;5,13,b;6,10,b;6,12,w;7,9,b;7,11,w;7,12,w;8,8,b;8,10,b;9,11,b;10,10,w;");
+		assertAllEqual(b, new Location[]{
+				new Location(8, 10),
+				new Location(9, 11),
+				new Location(7, 9),
+				new Location(5, 13),
+				new Location(8, 8),
+				new Location(6, 10)
+		}, 5000);
 	}
 	
 	@Test
