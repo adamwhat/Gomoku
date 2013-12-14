@@ -38,7 +38,7 @@ public class GomokuAI {
 			int[] di = new int[] { -1, -1, -1, 0, 0, 1, 1, 1 };
 			int[] dj = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
 			for (int i = 0; i < 8; i++) {
-				if (board.onBoard(loc.i + di[i], loc.j + dj[i])
+				if (Board.onBoard(loc.i + di[i], loc.j + dj[i])
 						&& !visited[loc.i + di[i]][loc.j + dj[i]]) {
 
 					queue.add(new Location(loc.i + di[i], loc.j + dj[i]));

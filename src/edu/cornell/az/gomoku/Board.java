@@ -81,4 +81,11 @@ public class Board {
 		}
 		board[i][j] = state;
 	}
+	
+	public void clear() {
+		board = new BoardState[BOARD_SIZE][BOARD_SIZE];
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			Arrays.fill(board[i], BoardState.EMPTY);
+		}
+	}
 }

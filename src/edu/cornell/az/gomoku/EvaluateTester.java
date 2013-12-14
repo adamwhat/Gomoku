@@ -40,8 +40,9 @@ public class EvaluateTester {
 	@Test
 	public void testEvaluateDefault() {
 		Board b = new Board();
-		setBoard(b, "3,3,b; 3,4,b");
+		setBoard(b, "3,3,b; 3,4,w");
 		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,3)));
+		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,4)));
 	}
 
 }

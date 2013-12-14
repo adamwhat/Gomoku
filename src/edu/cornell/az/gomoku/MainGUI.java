@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import javax.swing.*;
+
 import java.util.*;
 
 public class MainGUI {
@@ -12,13 +13,45 @@ public class MainGUI {
 
 		final int FRAME_WIDTH = 600;
 		final int FRAME_HEIGHT = 650;
-		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		frame.setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.setTitle("Gomoku");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		GomokuPanel panel = new GomokuPanel(BoardState.BLACK);
-		frame.add(panel);
-
+		final GomokuPanel panel = new GomokuPanel(BoardState.BLACK);
+		
+		JPanel side = new JPanel();
+		JButton saveButton = new JButton("Save Board");
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.saveBoard();
+			}});
+		JButton clearButton = new JButton("Clear Board");
+		clearButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.clearBoard();
+			}});
+		
+		JCheckBox cbox = new JCheckBox("Test Mode");
+		cbox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				panel.setTestMode(e.getStateChange() == ItemEvent.SELECTED);
+			}
+		});
+		
+		side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
+		side.add(saveButton);
+		side.add(clearButton);
+		side.add(cbox);
+		
+		JPanel totalPanel = new JPanel();
+		totalPanel.setLayout(new BoxLayout(totalPanel, BoxLayout.X_AXIS));
+		totalPanel.add(panel);
+		totalPanel.add(side);
+		
+		frame.add(totalPanel);
 		frame.setVisible(true);
 	}
 }
@@ -32,6 +65,8 @@ class GomokuPanel extends JPanel {
 	private Location playerLastMove;
 	private boolean working;
 	private GomokuAI gomokuAI;
+	
+	private boolean testMode = false;
 
 	private Random random = new Random();
 
@@ -39,10 +74,27 @@ class GomokuPanel extends JPanel {
 		super();
 		board = new Board();
 		this.identity = identity;
+		this.testMode = false;
 		working = false;
 		playerLastMove = null;
 		gomokuAI = new GomokuAI(Board.opponentOf(identity));
 		addMouseListener(new GomokuListener());
+	}
+	
+	public boolean getTestMode() {
+		return testMode;
+	}
+	
+	public void setTestMode(boolean testMode) {
+		this.testMode = testMode;
+	}
+	
+	public void saveBoard() {
+		System.out.println(board);
+	}
+
+	public void clearBoard() {
+		board.clear();
 	}
 
 	class AIWorker extends SwingWorker<Boolean, String> {
@@ -91,7 +143,11 @@ class GomokuPanel extends JPanel {
 			board.placeAtLocation(row, col, identity);
 			playerLastMove = new Location(row, col);
 			repaint();
-			new AIWorker().execute();
+			if (!testMode) {
+				new AIWorker().execute();
+			} else {
+				identity = Board.opponentOf(identity);
+			}
 		}
 	}
 
