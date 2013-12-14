@@ -2,7 +2,7 @@ package edu.cornell.az.gomoku;
 
 public class Evaluate {
 	
-	class Directions {
+	enum Directions {
 		N, E, W, S, NE, NW, SE, SW;
 	}
 	
