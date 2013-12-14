@@ -26,19 +26,23 @@ public class EvaluateTester {
 		b.placeAtLocation(3, 3, BoardState.BLACK);
 		b.placeAtLocation(3, 2, BoardState.BLACK);
 		b.placeAtLocation(3, 1, BoardState.BLACK);
+		b.placeAtLocation(3, 4, BoardState.BLACK);
 		b.placeAtLocation(3, 5, BoardState.BLACK);
-		assertEquals(new BoardStats(5,0), Evaluate.count(b, new Location(3,4),0,1,BoardState.BLACK));
-		assertEquals(new BoardStats(5,0), Evaluate.count(b, new Location(3,4),0,-1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(3,4),0,1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(3,4),0,-1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(3,5),0,1,BoardState.BLACK));
 	}
 	@Test
 	public void testCountDiagonal() {
 		Board b = new Board();
 		b.placeAtLocation(3, 3, BoardState.BLACK);
+		b.placeAtLocation(2, 2, BoardState.BLACK);
 		b.placeAtLocation(4, 4, BoardState.BLACK);
 		b.placeAtLocation(5, 5, BoardState.BLACK);
 		b.placeAtLocation(6, 6, BoardState.BLACK);
 		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(2,2),1,1,BoardState.BLACK));
 		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(2,2),-1,-1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(4,4),-1,-1,BoardState.BLACK));
 	}
 	@Test
 	public void testEvaluateDefault() {
@@ -52,6 +56,23 @@ public class EvaluateTester {
 	public void testFiveConnect() {
 		Board b = new Board();
 		setBoard(b, "2,2,b; 3,3,b; 4,4,b; 5,5,b; 6,6,b; 7,7,b;");
+	}
+	
+	@Test
+	public void testH2() {
+		Board b= new Board();
+		setBoard(b, "7,11,b;7,12,b;8,11,w;8,12,w;10,13,b;11,10,w;");
+		assertEquals(5, Evaluate.evaluateBoard(b, new Location(7, 11)));
+		assertEquals(5, Evaluate.evaluateBoard(b, new Location(7, 12)));
+		assertEquals(5, Evaluate.evaluateBoard(b, new Location(8, 11)));
+		assertEquals(5, Evaluate.evaluateBoard(b, new Location(8, 12)));
+	}
+	
+	@Test
+	public void testS2() {
+		Board b= new Board();
+		setBoard(b, )
+		
 	}
 
 }

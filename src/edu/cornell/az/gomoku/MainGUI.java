@@ -31,6 +31,7 @@ public class MainGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.clearBoard();
+				panel.repaint();
 			}});
 		
 		JCheckBox cbox = new JCheckBox("Test Mode");
@@ -40,6 +41,7 @@ public class MainGUI {
 				panel.setTestMode(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
+		cbox.doClick();
 		
 		side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
 		side.add(saveButton);
