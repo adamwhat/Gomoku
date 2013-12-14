@@ -5,14 +5,19 @@ public class Evaluate {
 	private static final int[] DX = new int[] {0, 1, 1, 1};
 	private static final int[] DY = new int[] {1, 0, 1, -1};
 	
-	public static int evaluateBoard(Board b, Location loc, BoardState myIdentity) {
+	/*
+	 *  Assume b.getLocation(loc) is filled and the last move is done by the player
+	 *  b.getLocation(loc). Return the score.
+	 */
+	
+	public static int evaluateBoard(Board b, Location loc) {
 		assert(b.getLocation(loc) != BoardState.EMPTY);
 		int[] s = new int[6];
 		int[] h = new int[6];
 		int[] score = new int[] {100000, 10000, 5000, 1000, 500, 200, 100, 50, 10, 5, 3, 0};
 
 		for (int i = 0; i < DX.length; i++) {
-			BoardStats stats = count(b, loc, DX[i], DY[i], myIdentity);
+			BoardStats stats = count(b, loc, DX[i], DY[i], b.getLocation(loc));
 			if (stats.piece > 5 || stats.piece < 2) {
 				continue;
 			}

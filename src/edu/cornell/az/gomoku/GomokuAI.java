@@ -9,7 +9,7 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 0;
+	private int maxLevel = 7;
 	public static final int MAX_CANDIDATE_LOCATIONS = 10;
 	// control visualization;
 	private volatile boolean drawPrunedTree = false;
@@ -62,7 +62,7 @@ public class GomokuAI {
 				opponentMove)) {
 			board.setLocation(l, myIdentity);
 			double score = evaluate(board, Board.opponentOf(myIdentity),
-					opponentMove, Double.NEGATIVE_INFINITY,
+					l, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, maxLevel, root_fulltree,
 					root_prunedtree);
 			if (score > maximum_score) {
@@ -89,7 +89,9 @@ public class GomokuAI {
 			visualClient.newEdge(parent_full, current_node_full);
 		}
 		if (level == 0) {
-			return Evaluate.evaluateBoard(board, lastMove, Board.opponentOf(turn)) * (Board.opponentOf(turn) == myIdentity? 1 : -1);
+			int res = Evaluate.evaluateBoard(board, lastMove) * (turn == myIdentity? -1 : 1);
+			// System.out.println(res);
+			return res;
 		}
 		if (turn == myIdentity) {
 			// Maximizer
