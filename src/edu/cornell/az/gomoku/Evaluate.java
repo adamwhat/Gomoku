@@ -18,9 +18,14 @@ public class Evaluate {
 
 		for (int i = 0; i < DX.length; i++) {
 			BoardStats stats = count(b, loc, DX[i], DY[i], b.getLocation(loc));
-			if (stats.piece > 5 || stats.piece < 2) {
+			if (stats.piece < 2) {
 				continue;
 			}
+			
+			if (stats.piece >= 5) {
+				return score[0];
+			}
+
 			if (stats.empty == 2) {
 				h[stats.piece]++;
 			} else {
@@ -28,10 +33,10 @@ public class Evaluate {
 			}
 		}
 		
-		if (s[5] + h[5] >= 1) {
+/*		if (s[5] + h[5] >= 1) {
 			return score[0];
 		}
-		
+*/		
 		if (h[4] != 0 || s[4] > 2 || s[4] != 0 && h[3] != 0) {
 			return score[1];
 		}
