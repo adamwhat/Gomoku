@@ -15,20 +15,11 @@ public class GomokuAI {
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
 	private int edgeStyleId;
+
 	UbigraphClient visualClient = new UbigraphClient();
 
 	public GomokuAI(BoardState me) {
 		myIdentity = me;
-	}
-
-	public static BoardState opponentOf(BoardState x) {
-		if (x == BoardState.BLACK) {
-			return BoardState.WHITE;
-		}
-		if (x == BoardState.WHITE) {
-			return BoardState.BLACK;
-		}
-		throw new AssertionError("Empty cell has no opponent");
 	}
 
 	private List<Location> getFeasibleLocations(Board board, int number,
@@ -49,6 +40,7 @@ public class GomokuAI {
 			for (int i = 0; i < 8; i++) {
 				if (board.onBoard(loc.i + di[i], loc.j + dj[i])
 						&& !visited[loc.i + di[i]][loc.j + dj[i]]) {
+
 					queue.add(new Location(loc.i + di[i], loc.j + dj[i]));
 				}
 			}
@@ -72,8 +64,8 @@ public class GomokuAI {
 		for (Location l : getFeasibleLocations(board, MAX_CANDIDATE_LOCATIONS,
 				opponentMove)) {
 			board.setLocation(l, myIdentity);
-			double score = evaluate(board, opponentOf(myIdentity),
-					opponentMove, Double.NEGATIVE_INFINITY,
+			double score = evaluate(board, Board.opponentOf(myIdentity),
+					l, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, maxLevel, root);
 			if (score > maximum_score) {
 				maximum_score = score;
@@ -81,6 +73,7 @@ public class GomokuAI {
 			}
 			board.setLocation(l, BoardState.EMPTY);
 		}
+		System.out.println("Max_Score = " + maximum_score);
 		return maximum_loc;
 	}
 
@@ -123,7 +116,9 @@ public class GomokuAI {
 			}
 		}
 		if (level == 0) {
-			return 0.0;
+			int res = Evaluate.evaluateBoard(board, lastMove) * (turn == myIdentity? -1 : 1);
+			// System.out.println(res);
+			return res;
 		}
 		if (turn == myIdentity) {
 			// Maximizer
@@ -137,7 +132,7 @@ public class GomokuAI {
 				board.setLocation(l, turn);
 				alpha = Math.max(
 						alpha,
-						evaluate(board, opponentOf(turn), l, alpha, beta,
+						evaluate(board, Board.opponentOf(turn), l, alpha, beta,
 								level - 1, currentNode));
 				board.setLocation(l, BoardState.EMPTY);
 			}
@@ -152,7 +147,7 @@ public class GomokuAI {
 				board.setLocation(l, turn);
 				beta = Math.min(
 						beta,
-						evaluate(board, opponentOf(turn), l, alpha, beta,
+						evaluate(board, Board.opponentOf(turn), l, alpha, beta,
 								level - 1, currentNode));
 				board.setLocation(l, BoardState.EMPTY);
 			}

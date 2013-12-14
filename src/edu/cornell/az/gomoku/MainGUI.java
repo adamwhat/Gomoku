@@ -41,7 +41,7 @@ class GomokuPanel extends JPanel {
 		this.identity = identity;
 		working = false;
 		playerLastMove = null;
-		gomokuAI = new GomokuAI(identity);
+		gomokuAI = new GomokuAI(Board.opponentOf(identity));
 		addMouseListener(new GomokuListener());
 	}
 
@@ -55,7 +55,7 @@ class GomokuPanel extends JPanel {
 				}
 				working = true;
 				Location loc = gomokuAI.calculateNextMove(board, playerLastMove);
-				board.placeAtLocation(loc.i, loc.j, GomokuAI.opponentOf(identity));
+				board.placeAtLocation(loc.i, loc.j, Board.opponentOf(identity));
 				repaint();
 				return true;
 			} catch (Exception failure) {
