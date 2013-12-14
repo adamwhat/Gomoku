@@ -9,25 +9,16 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 3;
+	private int maxLevel = 0;
 	public static final int MAX_CANDIDATE_LOCATIONS = 10;
-	private volatile boolean drawPrunedTree = true;
-	private volatile boolean drawFullTree = true;
+	// control visualization;
+	private volatile boolean drawPrunedTree = false;
+	private volatile boolean drawFullTree = false;
 
 	UbigraphClient visualClient = new UbigraphClient();
 
 	public GomokuAI(BoardState me) {
 		myIdentity = me;
-	}
-
-	public static BoardState opponentOf(BoardState x) {
-		if (x == BoardState.BLACK) {
-			return BoardState.WHITE;
-		}
-		if (x == BoardState.WHITE) {
-			return BoardState.BLACK;
-		}
-		throw new AssertionError("Empty cell has no opponent");
 	}
 
 	private List<Location> getFeasibleLocations(Board board, int number,
@@ -46,7 +37,7 @@ public class GomokuAI {
 			int[] di = new int[] { -1, -1, -1, 0, 0, 1, 1, 1 };
 			int[] dj = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
 			for (int i = 0; i < 8; i++) {
-				if (board.onBoard(loc.i+di[i], loc.j + dj[i]) && !visited[loc.i + di[i]][loc.j + dj[i]]) {
+				if (Board.onBoard(loc.i+di[i], loc.j + dj[i]) && !visited[loc.i + di[i]][loc.j + dj[i]]) {
 					queue.add(new Location(loc.i + di[i], loc.j + dj[i]));
 				}
 			}
@@ -70,7 +61,7 @@ public class GomokuAI {
 		for (Location l : getFeasibleLocations(board, MAX_CANDIDATE_LOCATIONS,
 				opponentMove)) {
 			board.setLocation(l, myIdentity);
-			double score = evaluate(board, opponentOf(myIdentity),
+			double score = evaluate(board, Board.opponentOf(myIdentity),
 					opponentMove, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, maxLevel, root_fulltree,
 					root_prunedtree);
@@ -80,6 +71,7 @@ public class GomokuAI {
 			}
 			board.setLocation(l, BoardState.EMPTY);
 		}
+		System.out.println("Max_Score = " + maximum_score);
 		return maximum_loc;
 	}
 
@@ -97,7 +89,7 @@ public class GomokuAI {
 			visualClient.newEdge(parent_full, current_node_full);
 		}
 		if (level == 0) {
-			return 0.0;
+			return Evaluate.evaluateBoard(board, lastMove, Board.opponentOf(turn)) * (Board.opponentOf(turn) == myIdentity? 1 : -1);
 		}
 		if (turn == myIdentity) {
 			// Maximizer
@@ -109,7 +101,7 @@ public class GomokuAI {
 				board.setLocation(l, turn);
 				alpha = Math.max(
 						alpha,
-						evaluate(board, opponentOf(turn), l, alpha, beta,
+						evaluate(board, Board.opponentOf(turn), l, alpha, beta,
 								level - 1, current_node_full,
 								current_node_pruned));
 				board.setLocation(l, BoardState.EMPTY);
@@ -125,7 +117,7 @@ public class GomokuAI {
 				board.setLocation(l, turn);
 				beta = Math.min(
 						beta,
-						evaluate(board, opponentOf(turn), l, alpha, beta,
+						evaluate(board, Board.opponentOf(turn), l, alpha, beta,
 								level - 1, current_node_full,
 								current_node_pruned));
 				board.setLocation(l, BoardState.EMPTY);

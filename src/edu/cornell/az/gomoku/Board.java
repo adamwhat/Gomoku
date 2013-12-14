@@ -49,10 +49,20 @@ public class Board {
 		setLocation(l.i, l.j, state);
 	}
 	
-	public boolean onBoard(int i, int j) {
+	public static boolean onBoard(int i, int j) {
 		return i>=0 && j>=0 && i < BOARD_SIZE && j < BOARD_SIZE;
 	}
 	
+	public static BoardState opponentOf(BoardState x) {
+		if (x == BoardState.BLACK) {
+			return BoardState.WHITE;
+		}
+		if (x == BoardState.WHITE) {
+			return BoardState.BLACK;
+		}
+		throw new AssertionError("Empty cell has no opponent");
+	}
+
 	public void placeAtLocation(int i, int j, BoardState state) {
 		if (i < 0 || j < 0 || i >= BOARD_SIZE || j>= BOARD_SIZE) {
 			throw new IllegalArgumentException("(" + i + ", " + j + ") was out of bound");
