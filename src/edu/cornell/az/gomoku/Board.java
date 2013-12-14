@@ -36,6 +36,10 @@ public class Board {
 		return board[i][j]; 
 	}
 	
+	public BoardState getLocation(Location l) {
+		return getLocation(l.i, l.j);
+	}
+	
 	public void setLocation(Location l, BoardState state) {
 		setLocation(l.i, l.j, state);
 	}

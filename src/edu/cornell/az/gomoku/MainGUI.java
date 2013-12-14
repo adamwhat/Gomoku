@@ -51,11 +51,13 @@ class GomokuPanel extends JPanel {
 			try {
 				working = true;
 				// TODO: Finish this function
-				// Location loc = gomokuAI.calculateNextMove(board, playerLastMove);
-				Location loc = new Location(random.nextInt(19), random.nextInt(19));
+				Location loc = gomokuAI.calculateNextMove(board, playerLastMove);
+				// Location loc = new Location(random.nextInt(19), random.nextInt(19));
+				/*
 				try {
-					Thread.sleep(1000);
+					//Thread.sleep(1000);
 				} catch (InterruptedException ie) {}
+				*/
 				board.placeAtLocation(loc.i, loc.j, GomokuAI.opponentOf(identity));
 				repaint();
 				return true;
