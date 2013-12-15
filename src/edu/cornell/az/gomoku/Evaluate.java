@@ -8,13 +8,7 @@ public class Evaluate {
 	private static final int[] DX = new int[] {0, 1, 1, 1};
 	private static final int[] DY = new int[] {1, 0, 1, -1};
 	
-	/*
-	 *  Assume b.getLocation(loc) is filled and the last move is done by the player
-	 *  b.getLocation(loc). Return the score.
-	 */
-	
-
-	public static void floodFill(Board b, Location loc, BoardState identity, boolean[][] visited, List<Location> res) {
+	private static void floodFill(Board b, Location loc, BoardState identity, boolean[][] visited, List<Location> res) {
 		if (!Board.onBoard(loc.i, loc.j) || visited[loc.i][loc.j]) {
 			return;
 		}
@@ -40,7 +34,7 @@ public class Evaluate {
 		return maxScore;
 	}
 
-	public static int evaluateLocation(Board b, Location loc) {
+	private static int evaluateLocation(Board b, Location loc) {
 		assert(b.getLocation(loc) != BoardState.EMPTY);
 		int[] s = new int[6];
 		int[] h = new int[6];
