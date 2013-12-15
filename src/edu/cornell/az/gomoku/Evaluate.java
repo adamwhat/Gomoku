@@ -11,17 +11,19 @@ public class Evaluate {
 	protected BoardState evalFor;
 	
 	public Evaluate(BoardState evalFor) {
+		setEvalFor(evalFor);
+	}
+	
+	public void setEvalFor(BoardState evalFor) {
 		this.evalFor = evalFor;
 	}
 	
-	private static void floodFill(Board b, Location loc, BoardState identity, boolean[][] visited, List<Location> res) {
-		if (!Board.onBoard(loc.i, loc.j) || visited[loc.i][loc.j]) {
+	private void floodFill(Board b, Location loc, BoardState identity, boolean[][] visited, List<Location> res) {
+		if (!Board.onBoard(loc.i, loc.j) || visited[loc.i][loc.j] || b.getLocation(loc) != identity) {
 			return;
 		}
 		visited[loc.i][loc.j] = true;
-		if (b.getLocation(loc) == identity) {
-			res.add(loc);
-		}
+		res.add(loc);
 		for (int i = 0; i < DX.length; i++) {
 			floodFill(b, new Location(loc.i + DX[i], loc.j + DY[i]), identity, visited, res);
 			floodFill(b, new Location(loc.i - DX[i], loc.j - DY[i]), identity, visited, res);
@@ -37,7 +39,7 @@ public class Evaluate {
 		for (Location l : res) {
 			maxScore = Math.max(maxScore, evaluateLocation(b, l));
 		}
-		return maxScore  * (b.getLocation(loc) == evalFor? -1 : 1);
+		return maxScore  * (b.getLocation(loc) == evalFor? 1 : -1);
 	}
 
 	private int evaluateLocation(Board b, Location loc) {

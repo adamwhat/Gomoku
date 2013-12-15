@@ -4,16 +4,20 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class EvaluateTester {
+public class EvaluateTester{
 
+	private static Evaluate evaluator = new Evaluate(BoardState.BLACK);
 
 	public void assertAllEqual(Board b, Location[] locations, int expected) {
 		for (Location l : locations) {
 			try {
-				assertEquals(expected, Evaluate.evaluateBoard(b, l));
+				evaluator.setEvalFor(b.getLocation(l));
+				assertEquals(expected, evaluator.evaluateBoard(b, l));
 			} catch (AssertionError e) {
 				System.out.println("Test Failed for the case " + b + "\nAt " + l);
 				throw e;
+			} finally {
+				evaluator.setEvalFor(BoardState.BLACK);
 			}
 		}
 	}
@@ -21,22 +25,22 @@ public class EvaluateTester {
 	@Test
 	public void testCountHorizontal() {
 		Board b = new Board("3,3,b;3,2,b;3,1,b;3,4,b;3,5,b;");
-		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(3,4),0,1,BoardState.BLACK));
-		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(3,4),0,-1,BoardState.BLACK));
-		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(3,5),0,1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), evaluator.count(b, new Location(3,4),0,1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), evaluator.count(b, new Location(3,4),0,-1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), evaluator.count(b, new Location(3,5),0,1,BoardState.BLACK));
 	}
 	@Test
 	public void testCountDiagonal() {
 		Board b = new Board("3,3,b;2,2,b;4,4,b;5,5,b;6,6,b;");
-		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(2,2),1,1,BoardState.BLACK));
-		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(2,2),-1,-1,BoardState.BLACK));
-		assertEquals(new BoardStats(5,2), Evaluate.count(b, new Location(4,4),-1,-1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), evaluator.count(b, new Location(2,2),1,1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), evaluator.count(b, new Location(2,2),-1,-1,BoardState.BLACK));
+		assertEquals(new BoardStats(5,2), evaluator.count(b, new Location(4,4),-1,-1,BoardState.BLACK));
 	}
 	@Test
-	public void testEvaluateDefault() {
+	public void testevaluatorDefault() {
 		Board b = new Board("3,3,b; 3,4,w");
-		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,3)));
-		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,4)));
+		assertEquals(0, evaluator.evaluateBoard(b, new Location(3,3)));
+		assertEquals(0, evaluator.evaluateBoard(b, new Location(3,4)));
 	}
 	@Test
 	public void testMoreThanFive() {
@@ -47,14 +51,14 @@ public class EvaluateTester {
 	@Test
 	public void testFiveConnect() {
 		Board b = new Board("2,2,b; 3,3,b; 4,4,b; 5,5,b; 6,6,b;");
-		assertEquals(100000, Evaluate.evaluateBoard(b, new Location(2, 2)));
-		assertEquals(100000, Evaluate.evaluateBoard(b, new Location(3, 3)));
+		assertEquals(100000, evaluator.evaluateBoard(b, new Location(2, 2)));
+		assertEquals(100000, evaluator.evaluateBoard(b, new Location(3, 3)));
 	}
 	
 	@Test
 	public void testLiveFour() {
 		Board b = new Board("10,12,b;11,13,b;11,15,w;12,13,w;12,14,b;13,13,w;13,15,b;");
-		assertEquals(10000, Evaluate.evaluateBoard(b, new Location(11,13)));
+		assertEquals(10000, evaluator.evaluateBoard(b, new Location(11,13)));
 		assertAllEqual(b, new Location[]{
 				new Location(12, 14),
 				new Location(11, 13),
@@ -110,10 +114,11 @@ public class EvaluateTester {
 	@Test
 	public void testH2() {
 		Board b= new Board("7,11,b;7,12,b;8,11,w;8,12,w;10,13,b;11,10,w;");
-		assertEquals(5, Evaluate.evaluateBoard(b, new Location(7, 11)));
-		assertEquals(5, Evaluate.evaluateBoard(b, new Location(7, 12)));
-		assertEquals(5, Evaluate.evaluateBoard(b, new Location(8, 11)));
-		assertEquals(5, Evaluate.evaluateBoard(b, new Location(8, 12)));
+		evaluator.setEvalFor(BoardState.BLACK);
+		assertEquals(5, evaluator.evaluateBoard(b, new Location(7, 11)));
+		assertEquals(5, evaluator.evaluateBoard(b, new Location(7, 12)));
+		assertEquals(-5, evaluator.evaluateBoard(b, new Location(8, 11)));
+		assertEquals(-5, evaluator.evaluateBoard(b, new Location(8, 12)));
 	}
 	
 	@Test
