@@ -5,6 +5,19 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class EvaluateTester {
+
+
+	public void assertAllEqual(Board b, Location[] locations, int expected) {
+		for (Location l : locations) {
+			try {
+				assertEquals(expected, Evaluate.evaluateBoard(b, l));
+			} catch (AssertionError e) {
+				System.out.println("Test Failed for the case " + b + "\nAt " + l);
+				throw e;
+			}
+		}
+	}
+
 	@Test
 	public void testCountHorizontal() {
 		Board b = new Board("3,3,b;3,2,b;3,1,b;3,4,b;3,5,b;");
@@ -24,11 +37,6 @@ public class EvaluateTester {
 		Board b = new Board("3,3,b; 3,4,w");
 		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,3)));
 		assertEquals(0, Evaluate.evaluateBoard(b, new Location(3,4)));
-	}
-	public void assertAllEqual(Board b, Location[] locations, int expected) {
-		for (Location l : locations) {
-			assertEquals(expected, Evaluate.evaluateBoard(b, l));
-		}
 	}
 	@Test
 	public void testMoreThanFive() {
@@ -58,8 +66,7 @@ public class EvaluateTester {
 	
 	@Test
 	public void testTwoDeadFour() {
-		Board b = new Board();
-		Board.setBoard(b, "9,6,b;9,14,b;10,7,b;10,13,b;11,8,b;11,12,b;12,9,b;12,10,w;12,11,b;13,10,w;14,10,w;15,10,w;16,10,w;17,10,w;18,10,w;");
+		Board b = new Board("9,6,b;9,14,b;10,7,b;10,13,b;11,8,b;11,12,b;12,9,b;12,10,w;12,11,b;13,10,w;14,10,w;15,10,w;16,10,w;17,10,w;18,10,w;");
 		assertAllEqual(b, new Location[]{
 				new Location(12, 9),
 				new Location(12, 11),
@@ -112,6 +119,7 @@ public class EvaluateTester {
 	@Test
 	public void testS2() {
 		Board b= new Board("3,10,w;4,8,b;4,9,w;4,10,b;4,11,w;5,10,b;");
+		fail("not done");
 	}
 
 }

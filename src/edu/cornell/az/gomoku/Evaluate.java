@@ -1,5 +1,8 @@
 package edu.cornell.az.gomoku;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Evaluate {
 	
 	private static final int[] DX = new int[] {0, 1, 1, 1};
@@ -10,7 +13,34 @@ public class Evaluate {
 	 *  b.getLocation(loc). Return the score.
 	 */
 	
+
+	public static void floodFill(Board b, Location loc, BoardState identity, boolean[][] visited, List<Location> res) {
+		if (!Board.onBoard(loc.i, loc.j) || visited[loc.i][loc.j]) {
+			return;
+		}
+		visited[loc.i][loc.j] = true;
+		if (b.getLocation(loc) == identity) {
+			res.add(loc);
+		}
+		for (int i = 0; i < DX.length; i++) {
+			floodFill(b, new Location(loc.i + DX[i], loc.j + DY[i]), identity, visited, res);
+			floodFill(b, new Location(loc.i - DX[i], loc.j - DY[i]), identity, visited, res);
+		}
+	}
+
 	public static int evaluateBoard(Board b, Location loc) {
+		List<Location> res = new ArrayList<Location>();
+		boolean[][] vis = new boolean[Board.BOARD_SIZE][Board.BOARD_SIZE];
+		floodFill(b, loc, b.getLocation(loc), vis, res);
+		int maxScore = 0;
+		
+		for (Location l : res) {
+			maxScore = Math.max(maxScore, evaluateLocation(b, l));
+		}
+		return maxScore;
+	}
+
+	public static int evaluateLocation(Board b, Location loc) {
 		assert(b.getLocation(loc) != BoardState.EMPTY);
 		int[] s = new int[6];
 		int[] h = new int[6];
