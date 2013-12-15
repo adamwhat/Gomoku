@@ -9,9 +9,9 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 3;
+	private int maxLevel = 2;
 	public static final int MAX_CANDIDATE_LOCATIONS = 10;
-	private volatile boolean draw = true;
+	private volatile boolean draw = false;
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
 	private int edgeStyleId;
@@ -22,6 +22,10 @@ public class GomokuAI {
 	public GomokuAI(BoardState me) {
 		myIdentity = me;
 		evaluator = new Evaluate(me);
+	}
+	
+	public Evaluate getEvaluator() {
+		return evaluator;
 	}
 
 	private List<Location> getFeasibleLocations(Board board, int number,

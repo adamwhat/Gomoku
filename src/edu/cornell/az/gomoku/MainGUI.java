@@ -48,12 +48,21 @@ public class MainGUI {
 				panel.setTestMode(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-		cbox.doClick();
+		// cbox.doClick();
+		
+		JButton evaluateButton = new JButton("Evaluate");
+		evaluateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.evaluateBoard();
+			}
+		});
 		
 		side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
 		side.add(saveButton);
 		side.add(clearButton);
 		side.add(constructBoardButton);
+		side.add(evaluateButton);
 		side.add(cbox);
 		
 		JPanel totalPanel = new JPanel();
@@ -111,6 +120,11 @@ class GomokuPanel extends JPanel {
 	public void clearBoard() {
 		board.clear();
 		repaint();
+	}
+	
+	public void evaluateBoard() {
+		int res = gomokuAI.getEvaluator().evaluateBoard(board, playerLastMove);
+		System.out.println("Score = " + res);
 	}
 
 	class AIWorker extends SwingWorker<Boolean, String> {
