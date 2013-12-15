@@ -5,8 +5,14 @@ import java.util.List;
 
 public class Evaluate {
 	
-	private static final int[] DX = new int[] {0, 1, 1, 1};
-	private static final int[] DY = new int[] {1, 0, 1, -1};
+	protected static final int[] DX = new int[] {0, 1, 1, 1};
+	protected static final int[] DY = new int[] {1, 0, 1, -1};
+	
+	protected BoardState evalFor;
+	
+	public Evaluate(BoardState evalFor) {
+		this.evalFor = evalFor;
+	}
 	
 	private static void floodFill(Board b, Location loc, BoardState identity, boolean[][] visited, List<Location> res) {
 		if (!Board.onBoard(loc.i, loc.j) || visited[loc.i][loc.j]) {
@@ -22,7 +28,7 @@ public class Evaluate {
 		}
 	}
 
-	public static int evaluateBoard(Board b, Location loc) {
+	public int evaluateBoard(Board b, Location loc) {
 		List<Location> res = new ArrayList<Location>();
 		boolean[][] vis = new boolean[Board.BOARD_SIZE][Board.BOARD_SIZE];
 		floodFill(b, loc, b.getLocation(loc), vis, res);
@@ -31,10 +37,10 @@ public class Evaluate {
 		for (Location l : res) {
 			maxScore = Math.max(maxScore, evaluateLocation(b, l));
 		}
-		return maxScore;
+		return maxScore  * (b.getLocation(loc) == evalFor? -1 : 1);
 	}
 
-	private static int evaluateLocation(Board b, Location loc) {
+	private int evaluateLocation(Board b, Location loc) {
 		assert(b.getLocation(loc) != BoardState.EMPTY);
 		int[] s = new int[6];
 		int[] h = new int[6];
@@ -105,7 +111,7 @@ public class Evaluate {
 	}
 	
 	
-	public static BoardStats count(Board b, Location loc, int dx, int dy, BoardState myIdentity) {
+	public BoardStats count(Board b, Location loc, int dx, int dy, BoardState myIdentity) {
 		int piece = 1;
 		int empty = 0;
 		int i = 0;
@@ -122,7 +128,7 @@ public class Evaluate {
 		return new BoardStats(piece, empty);
 	}
 	
-	public static boolean makeSense(Board b, Location loc, int dx, int dy, BoardState myIdentity) {
+	public boolean makeSense(Board b, Location loc, int dx, int dy, BoardState myIdentity) {
 		int piece = 1;
 		for (int i = 1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) != Board.opponentOf(myIdentity) ; i++, piece++);
 		for (int i = -1; Board.onBoard(loc.i + dx * i, loc.j + dy * i) && b.getLocation(loc.i+dx*i,loc.j+dy*i) == Board.opponentOf(myIdentity); i--, piece++);

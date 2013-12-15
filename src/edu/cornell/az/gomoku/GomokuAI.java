@@ -15,11 +15,13 @@ public class GomokuAI {
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
 	private int edgeStyleId;
+	private Evaluate evaluator;
 
 	UbigraphClient visualClient = new UbigraphClient();
 
 	public GomokuAI(BoardState me) {
 		myIdentity = me;
+		evaluator = new Evaluate(me);
 	}
 
 	private List<Location> getFeasibleLocations(Board board, int number,
@@ -116,7 +118,7 @@ public class GomokuAI {
 			}
 		}
 		if (level == 0) {
-			int res = Evaluate.evaluateBoard(board, lastMove) * (turn == myIdentity? -1 : 1);
+			int res = evaluator.evaluateBoard(board, lastMove);
 			// System.out.println(res);
 			return res;
 		}
