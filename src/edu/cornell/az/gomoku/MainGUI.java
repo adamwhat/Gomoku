@@ -48,7 +48,7 @@ public class MainGUI {
 				panel.setTestMode(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-		// cbox.doClick();
+		cbox.doClick();
 		
 		JButton evaluateButton = new JButton("Evaluate");
 		evaluateButton.addActionListener(new ActionListener() {
@@ -124,6 +124,8 @@ class GomokuPanel extends JPanel {
 	
 	public void evaluateBoard() {
 		int res = gomokuAI.getEvaluator().evaluateBoard(board, playerLastMove);
+		System.out.println("PlayerLastMove = " + playerLastMove);
+		System.out.println("Color = " + (board.getLocation(playerLastMove) == BoardState.BLACK?"Black":"White"));
 		System.out.println("Score = " + res);
 	}
 

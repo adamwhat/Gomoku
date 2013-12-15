@@ -9,19 +9,20 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 2;
-	public static final int MAX_CANDIDATE_LOCATIONS = 10;
+	private int maxLevel = 5;
+	public static final int MAX_CANDIDATE_LOCATIONS = 20;
 	private volatile boolean draw = false;
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
 	private int edgeStyleId;
 	private Evaluate evaluator;
+	private static final int threshold = -200;
 
 	UbigraphClient visualClient = new UbigraphClient();
 
 	public GomokuAI(BoardState me) {
 		myIdentity = me;
-		evaluator = new Evaluate(me);
+		evaluator = new EvaluateNaive(me);
 	}
 	
 	public Evaluate getEvaluator() {
@@ -37,7 +38,6 @@ public class GomokuAI {
 
 		while (!queue.isEmpty() && locs.size() < number) {
 			Location loc = queue.poll();
-			visited[loc.i][loc.j] = true;
 			if (board.getLocation(loc) == BoardState.EMPTY) {
 				locs.add(loc);
 			}
@@ -46,7 +46,7 @@ public class GomokuAI {
 			for (int i = 0; i < 8; i++) {
 				if (Board.onBoard(loc.i + di[i], loc.j + dj[i])
 						&& !visited[loc.i + di[i]][loc.j + dj[i]]) {
-
+					visited[loc.i + di[i]][loc.j + dj[i]] = true;
 					queue.add(new Location(loc.i + di[i], loc.j + dj[i]));
 				}
 			}
@@ -126,6 +126,13 @@ public class GomokuAI {
 			// System.out.println(res);
 			return res;
 		}
+
+
+		int res = evaluator.evaluateBoard(board, lastMove);
+		if (Math.abs(res) > 5000) {
+			return res;
+		}
+
 		if (turn == myIdentity) {
 			// Maximizer
 			for (Location l : getFeasibleLocations(board,
