@@ -105,6 +105,8 @@ public class Board {
 		if (cmd == null) {
 			return;
 		}
+
+		b.clear();
 		String[] t = cmd.trim().split(";");
 		for(String s : t) {
 			String[] p = s.trim().split(",");

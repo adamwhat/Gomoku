@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class MainGUI {
@@ -354,6 +353,9 @@ class GomokuPanel extends JPanel {
 	}
 	
 	public void evaluateBoard() {
+		if (playerLastMove == null) {
+			return;
+		}
 		int res = gomokuAI.getEvaluator().evaluateBoard(board, playerLastMove);
 		System.out.println("PlayerLastMove = " + playerLastMove);
 		System.out.println("Color = " + (board.getLocation(playerLastMove) == BoardState.BLACK?"Black":"White"));
@@ -465,7 +467,7 @@ class GomokuPanel extends JPanel {
 							pieceDiameter, 
 							pieceDiameter);
 					g2.fill(circle);
-					if (playerLastMove.i == row && playerLastMove.j == col) {
+					if (playerLastMove != null && playerLastMove.i == row && playerLastMove.j == col) {
 						g2.setColor(Color.RED);
 					} else {
 						g2.setColor(Color.black);
