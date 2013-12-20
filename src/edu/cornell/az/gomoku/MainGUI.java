@@ -4,14 +4,36 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import java.util.*;
 
 public class MainGUI {
+	
+	/**
+	 * Command-line Usage
+	 * MainGUI <agent1> <agent2> <level1> <bFractor1> <level2> <bFractor2> <N>
+	 * <agent> = Evaluate or EvaluateNaive
+	 * <N> = Number of Games
+	 * @param args
+	 */
 	public static void main(String args[]) {
+		if (args.length < 1) {
+			constructGUI();
+		} else {
+			if (args.length != 7) {
+				System.out.println("Please see comments for usage.");
+				return;
+			}
+
+
+			
+		}
+
+	}
+	
+	private static void constructGUI() {
 		JFrame frame = new JFrame();
 
 		final int FRAME_WIDTH = 720;
@@ -141,8 +163,6 @@ public class MainGUI {
 			}
 		});
 		enableVis.setMaximumSize(new Dimension(BUTTON_WIDTH, enableVis.getMinimumSize().height));
-		
-		
 		
 		visPanel.add(enableVis);
 		visPanel.add(drawFullTreeButton);
