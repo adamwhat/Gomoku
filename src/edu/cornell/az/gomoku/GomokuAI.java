@@ -9,8 +9,8 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 5;
-	private int maxCandidateLocations = 12;
+	private volatile int maxLevel = 5;
+	private volatile int maxCandidateLocations = 12;
 	private volatile boolean drawFullTree = false;
 	private ArrayList<Integer> shouldPrune = new ArrayList<>();
 	private int edgeStyleId;
@@ -174,7 +174,7 @@ public class GomokuAI {
 			newBoard.setLocation(l, myIdentity);
 			double score = evaluate(newBoard, Board.opponentOf(myIdentity),
 					l, Double.NEGATIVE_INFINITY,
-					Double.POSITIVE_INFINITY, maxLevel, root);
+					Double.POSITIVE_INFINITY, 0, root);
 			if (score > maximum_score) {
 				maximum_score = score;
 				maximum_loc = l;
@@ -225,7 +225,7 @@ public class GomokuAI {
 		}
 
 		int res = evaluator.evaluateBoard(board, lastMove);
-		if (level == 0 || Math.abs(res) > 5000) {
+		if (level == maxLevel || Math.abs(res) > 5000) {
 			return res;
 		}
 
@@ -242,7 +242,7 @@ public class GomokuAI {
 				alpha = Math.max(
 						alpha,
 						evaluate(board, Board.opponentOf(turn), l, alpha, beta,
-								level - 1, currentNode));
+								level + 1, currentNode));
 				board.setLocation(l, BoardState.EMPTY);
 			}
 			return alpha;
@@ -257,7 +257,7 @@ public class GomokuAI {
 				beta = Math.min(
 						beta,
 						evaluate(board, Board.opponentOf(turn), l, alpha, beta,
-								level - 1, currentNode));
+								level + 1, currentNode));
 				board.setLocation(l, BoardState.EMPTY);
 			}
 			return beta;
