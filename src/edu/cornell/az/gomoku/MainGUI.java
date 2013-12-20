@@ -74,7 +74,7 @@ public class MainGUI {
 		testPanel.add(constructBoardButton);
 		testPanel.add(evaluateButton);
 		testPanel.add(cbox);
-		testPanel.setBorder(BorderFactory.createTitledBorder("Test"));
+		testPanel.setBorder(BorderFactory.createTitledBorder("Debug"));
 		
 		JPanel visPanel = new JPanel();
 		// visPanel.setLayout(new BoxLayout(visPanel, BoxLayout.Y_AXIS));
@@ -87,6 +87,10 @@ public class MainGUI {
 				panel.getGomokuAI().setMaxCandidateLocations(((JSlider)(e.getSource())).getValue());
 			}
 		});
+		bFactor.setMajorTickSpacing(5);
+		bFactor.setMinorTickSpacing(1);
+		bFactor.setPaintTicks(true);
+		bFactor.setPaintLabels(true);
 		bFactor.setMaximumSize(new Dimension(2*BUTTON_WIDTH, bFactor.getMinimumSize().height));
 		
 		JSlider searchLevel = new JSlider(0, 8, panel.getGomokuAI().getMaxLevel());
@@ -98,6 +102,10 @@ public class MainGUI {
 			}
 		});
 		searchLevel.setMaximumSize(new Dimension(2*BUTTON_WIDTH, searchLevel.getMinimumSize().height));
+		searchLevel.setMajorTickSpacing(2);
+		searchLevel.setMinorTickSpacing(1);
+		searchLevel.setPaintTicks(true);
+		searchLevel.setPaintLabels(true);
 		
 
 		final JButton ABPrune = new JButton("A/B Prune");
@@ -147,8 +155,8 @@ public class MainGUI {
 		
 		JPanel sidePanel = new JPanel();
 		sidePanel.setLayout(new GridLayout(0, 1));
-		sidePanel.add(testPanel);
 		sidePanel.add(visPanel);
+		sidePanel.add(testPanel);
 		sidePanel.setMaximumSize(new Dimension(100, FRAME_HEIGHT));
 		
 		

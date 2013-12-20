@@ -77,7 +77,7 @@ public class Board {
 
 	public void placeAtLocation(int i, int j, BoardState state) {
 		if (i < 0 || j < 0 || i >= BOARD_SIZE || j>= BOARD_SIZE) {
-			throw new IllegalArgumentException("(" + i + ", " + j + ") was out of bound");
+			// throw new IllegalArgumentException("(" + i + ", " + j + ") was out of bound");
 		}
 		if (board[i][j] != BoardState.EMPTY) {
 			throw new IllegalArgumentException("(" + i + ", " + j + ") was occupied");
