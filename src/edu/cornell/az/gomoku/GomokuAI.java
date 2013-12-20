@@ -32,6 +32,7 @@ public class GomokuAI {
 		myIdentity = me;
 		evaluator = eval;
 		cmdEntry = true;
+		// defend = true;
 	}
 	
 	public BoardState getMyIdentity() {
