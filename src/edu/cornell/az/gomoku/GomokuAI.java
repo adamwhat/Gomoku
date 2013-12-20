@@ -2,6 +2,7 @@ package edu.cornell.az.gomoku;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.ubiety.ubigraph.UbigraphClient;
 
@@ -23,6 +24,20 @@ public class GomokuAI {
 		evaluator = new EvaluateNaive(me);
 	}
 	
+	public GomokuAI(BoardState me, Evaluate eval) {
+		myIdentity = me;
+		evaluator = eval;
+	}
+	
+	public BoardState getMyIdentity() {
+		return myIdentity;
+	}
+
+	public void setMyIdentity(BoardState myIdentity) {
+		this.myIdentity = myIdentity;
+		this.evaluator.setEvalFor(myIdentity);
+	}
+
 	public Evaluate getEvaluator() {
 		return evaluator;
 	}
@@ -162,6 +177,7 @@ public class GomokuAI {
 	*/
 
 	public Location calculateNextMove(Board board, Location opponentMove) {
+		Random random = new Random();
 		shouldPrune.clear();
 		// TODO opponentMove could be null
 		int root = 0;
@@ -181,13 +197,13 @@ public class GomokuAI {
 			double score = evaluate(newBoard, Board.opponentOf(myIdentity),
 					l, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, 0, root);
-			if (score > maximum_score) {
+			if (score > maximum_score || (score == maximum_score && random.nextInt() % 10 > 6)) {
 				maximum_score = score;
 				maximum_loc = l;
 			}
 			newBoard.setLocation(l, BoardState.EMPTY);
 		}
-		System.out.println("Max_Score = " + maximum_score);
+		//System.out.println("Max_Score = " + maximum_score);
 		return maximum_loc;
 	}
 

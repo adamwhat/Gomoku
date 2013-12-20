@@ -3,10 +3,12 @@ package edu.cornell.az.gomoku;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class MainGUI {
@@ -26,11 +28,115 @@ public class MainGUI {
 				System.out.println("Please see comments for usage.");
 				return;
 			}
-
-
+			
+			Evaluate firstEval = null, secondEval = null;
+			switch (args[0]) {
+			case "Evaluate":
+				firstEval = new Evaluate(BoardState.BLACK);
+				break;
+			case "EvaluateNaive":
+				firstEval = new EvaluateNaive(BoardState.BLACK);
+				break;
+			default:
+				System.out.println("Illegal Agent 1");
+				return;
+			}
+			switch (args[1]) {
+			case "Evaluate":
+				secondEval = new Evaluate(BoardState.WHITE);
+				break;
+			case "EvaluateNaive":
+				secondEval = new EvaluateNaive(BoardState.WHITE);
+				break;
+			default:
+				System.out.println("Illegal Agent 2");
+				return;
+			}
+			
+			GomokuAI firstAI = new GomokuAI(BoardState.BLACK, firstEval);
+			GomokuAI secondAI = new GomokuAI(BoardState.WHITE, secondEval);
+			firstAI.setMaxLevel(Integer.parseInt(args[2]));
+			firstAI.setMaxCandidateLocations(Integer.parseInt(args[3]));
+			secondAI.setMaxLevel(Integer.parseInt(args[4]));
+			secondAI.setMaxCandidateLocations(Integer.parseInt(args[5]));
+			int nGames = Integer.parseInt(args[6]);
+			System.out.println(args[0] + " goes first");
+			
+			long time1 = 0, time2 = 0;
+			int ai1_win_first = 0, ai2_win_second = 0; 
+			for (int i=0;i<nGames;i++) {
+				long[] result = matchAgainst(firstAI, secondAI);
+				time1 += result[1];
+				time2 += result[2];
+				printResult((int)result[0]);
+				if (result[0] > 0) {
+					ai1_win_first++;
+				} else {
+					ai2_win_second++;
+				}
+			}
+			int ai2_win_first = 0, ai1_win_second = 0;
+			System.out.println(args[1] + " goes first");
+			for (int i=0;i<nGames;i++) {
+				long[] result = matchAgainst(secondAI, firstAI);
+				time1 += result[2];
+				time2 += result[1];
+				printResult((int)result[0]);
+				if (result[0] > 0) {
+					ai2_win_first++;
+				} else {
+					ai1_win_second++;
+				}
+			}
+			System.out.println("Statistics");
+			System.out.format("%s l:%s bf:%s\n", args[0], args[2], args[3]);
+			System.out.format("%d %d\n", ai1_win_first, ai1_win_second);
+			System.out.format("%s l:%s bf:%s\n", args[1], args[4], args[5]);
+			System.out.format("%d %d\n", ai2_win_first, ai2_win_second);
+			System.out.format("%s used %d s\n%s used %d s\n", args[0], time1, args[1], time2);
 			
 		}
 
+	}
+	
+	private static void swapAI(GomokuAI[] ais) {
+		GomokuAI tmp = ais[0];
+		ais[0] = ais[1];
+		ais[1] = tmp;
+	}
+	
+	private static void printResult(int r) {
+		if (r > 0) {
+			System.out.println("First won");
+		} else {
+			System.out.println("Second won");
+		}
+	}
+	
+	private static long[] matchAgainst(GomokuAI first, GomokuAI second) {
+		GomokuAI[] ais = new GomokuAI[]{first, second};
+		long[] res = new long[3];
+		
+		Board board = new Board();
+		Location lastLocation = new Location(Board.BOARD_SIZE/2, Board.BOARD_SIZE/2);
+		board.setLocation(lastLocation, first.getMyIdentity());
+		swapAI(ais);
+		int eval = 0;
+		int i = 1;
+		while (Math.abs(eval = first.getEvaluator().evaluateBoard(board, lastLocation)) <= 10000) {
+			long t = System.currentTimeMillis();
+			lastLocation = ais[0].calculateNextMove(board, lastLocation);
+			res[i+1] += System.currentTimeMillis() - t;
+			board.setLocation(lastLocation, ais[0].getMyIdentity());
+			swapAI(ais);
+			i = 1-i;
+		}
+		if (eval > 0) {
+			res[0] = 1;
+		} else {
+			res[0] = -1;
+		}
+		return res;
 	}
 	
 	private static void constructGUI() {
