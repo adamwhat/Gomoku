@@ -102,6 +102,9 @@ public class Board {
     }
 	
 	public static void setBoard(Board b, String cmd) {
+		if (cmd == null) {
+			return;
+		}
 		String[] t = cmd.trim().split(";");
 		for(String s : t) {
 			String[] p = s.trim().split(",");

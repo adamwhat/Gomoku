@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.util.*;
 
@@ -11,27 +14,31 @@ public class MainGUI {
 	public static void main(String args[]) {
 		JFrame frame = new JFrame();
 
-		final int FRAME_WIDTH = 600;
+		final int FRAME_WIDTH = 720;
 		final int FRAME_HEIGHT = 650;
+		final int BUTTON_WIDTH = 120;
 		frame.setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.setTitle("Gomoku");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final GomokuPanel panel = new GomokuPanel(BoardState.BLACK);
+		panel.setSize(600, 600);
 		
-		JPanel side = new JPanel();
+		JPanel testPanel = new JPanel();
 		JButton saveButton = new JButton("Save Board");
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.saveBoard();
 			}});
+		saveButton.setMaximumSize(new Dimension(BUTTON_WIDTH, saveButton.getMinimumSize().height));
 		JButton clearButton = new JButton("Clear Board");
 		clearButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.clearBoard();
 			}});
+		clearButton.setMaximumSize(new Dimension(BUTTON_WIDTH, clearButton.getMinimumSize().height));
 		JButton constructBoardButton = new JButton("Construct");
 		constructBoardButton.addActionListener(new ActionListener() {
 			@Override
@@ -40,6 +47,7 @@ public class MainGUI {
 				panel.constructBoardFromString(s);
 			}
 		});
+		constructBoardButton.setMaximumSize(new Dimension(BUTTON_WIDTH, constructBoardButton.getMinimumSize().height));
 		
 		JCheckBox cbox = new JCheckBox("Test Mode");
 		cbox.addItemListener(new ItemListener() {
@@ -48,7 +56,8 @@ public class MainGUI {
 				panel.setTestMode(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-		cbox.doClick();
+		cbox.setMaximumSize(new Dimension(BUTTON_WIDTH, cbox.getMinimumSize().height));
+		// cbox.setSelected(true);
 		
 		JButton evaluateButton = new JButton("Evaluate");
 		evaluateButton.addActionListener(new ActionListener() {
@@ -57,18 +66,95 @@ public class MainGUI {
 				panel.evaluateBoard();
 			}
 		});
+		evaluateButton.setMaximumSize(new Dimension(BUTTON_WIDTH, evaluateButton.getMinimumSize().height));
 		
-		side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
-		side.add(saveButton);
-		side.add(clearButton);
-		side.add(constructBoardButton);
-		side.add(evaluateButton);
-		side.add(cbox);
+		testPanel.setLayout(new BoxLayout(testPanel, BoxLayout.Y_AXIS));
+		testPanel.add(saveButton);
+		testPanel.add(clearButton);
+		testPanel.add(constructBoardButton);
+		testPanel.add(evaluateButton);
+		testPanel.add(cbox);
+		testPanel.setBorder(BorderFactory.createTitledBorder("Test"));
+		
+		JPanel visPanel = new JPanel();
+		visPanel.setLayout(new BoxLayout(visPanel, BoxLayout.Y_AXIS));
+		JSlider bFactor = new JSlider(0, 20, panel.getGomokuAI().getMaxCandidateLocations());
+		bFactor.setBorder(BorderFactory.createTitledBorder("Max Branching Factor"));
+		bFactor.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				panel.getGomokuAI().setMaxCandidateLocations(((JSlider)(e.getSource())).getValue());
+			}
+		});
+		bFactor.setMaximumSize(new Dimension(2*BUTTON_WIDTH, bFactor.getMinimumSize().height));
+		
+		JSlider searchLevel = new JSlider(0, 8, panel.getGomokuAI().getMaxLevel());
+		searchLevel.setBorder(BorderFactory.createTitledBorder("Max Search Level"));
+		searchLevel.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				panel.getGomokuAI().setMaxLevel(((JSlider)(e.getSource())).getValue());
+			}
+		});
+		searchLevel.setMaximumSize(new Dimension(2*BUTTON_WIDTH, searchLevel.getMinimumSize().height));
+		
+
+		final JButton ABPrune = new JButton("A/B Prune");
+		ABPrune.setEnabled(panel.getGomokuAI().isDrawFullTree());
+		ABPrune.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.getGomokuAI().prune();
+			}
+		});
+		ABPrune.setMaximumSize(new Dimension(BUTTON_WIDTH, ABPrune.getMinimumSize().height));
+
+		final JCheckBox drawFullTreeButton = new JCheckBox("Full Tree");
+		drawFullTreeButton.setEnabled(panel.getGomokuAI().isDraw());
+		drawFullTreeButton.setSelected(panel.getGomokuAI().isDrawFullTree());
+		drawFullTreeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.getGomokuAI().setDrawFullTree(((JCheckBox)(e.getSource())).isSelected());
+				ABPrune.setEnabled(((JCheckBox)(e.getSource())).isSelected());
+			}
+		});
+		drawFullTreeButton.setMaximumSize(new Dimension(BUTTON_WIDTH, drawFullTreeButton.getMinimumSize().height));
+
+		JCheckBox enableVis = new JCheckBox("Enable Vis");
+		enableVis.setSelected(panel.getGomokuAI().isDraw());
+		enableVis.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.getGomokuAI().setDraw(((JCheckBox)(e.getSource())).isSelected());
+				drawFullTreeButton.setEnabled(((JCheckBox)(e.getSource())).isSelected());
+				ABPrune.setEnabled(((JCheckBox)(e.getSource())).isSelected() && drawFullTreeButton.isSelected());
+			}
+		});
+		enableVis.setMaximumSize(new Dimension(BUTTON_WIDTH, enableVis.getMinimumSize().height));
+		
+		
+		
+		visPanel.add(enableVis);
+		visPanel.add(drawFullTreeButton);
+		visPanel.add(ABPrune);
+		visPanel.add(searchLevel);
+		visPanel.add(bFactor);
+		visPanel.setBorder(BorderFactory.createTitledBorder("Visualization"));
+		visPanel.setSize(120, visPanel.getMinimumSize().height);
+
+		
+		JPanel sidePanel = new JPanel();
+		sidePanel.setLayout(new GridLayout(0, 1));
+		sidePanel.add(testPanel);
+		sidePanel.add(visPanel);
+		sidePanel.setMaximumSize(new Dimension(100, FRAME_HEIGHT));
+		
 		
 		JPanel totalPanel = new JPanel();
 		totalPanel.setLayout(new BoxLayout(totalPanel, BoxLayout.X_AXIS));
 		totalPanel.add(panel);
-		totalPanel.add(side);
+		totalPanel.add(sidePanel);
 		
 		frame.add(totalPanel);
 		frame.setVisible(true);
@@ -84,28 +170,37 @@ class GomokuPanel extends JPanel {
 	private Location playerLastMove;
 	private boolean working;
 	private GomokuAI gomokuAI;
+
+	private boolean terminate;
 	
 	private boolean testMode = false;
 
 	private Random random = new Random();
+
 
 	public GomokuPanel(BoardState identity) {
 		super();
 		board = new Board();
 		this.identity = identity;
 		this.testMode = false;
+		terminate = false;
 		working = false;
 		playerLastMove = null;
 		gomokuAI = new GomokuAI(Board.opponentOf(identity));
 		addMouseListener(new GomokuListener());
 	}
 	
+	public GomokuAI getGomokuAI() {
+		return gomokuAI;
+	}
+
 	public boolean getTestMode() {
 		return testMode;
 	}
 	
 	public void constructBoardFromString(String cmd) {
 		Board.setBoard(board, cmd);
+		terminate = false;
 		repaint();
 	}
 
@@ -119,6 +214,7 @@ class GomokuPanel extends JPanel {
 
 	public void clearBoard() {
 		board.clear();
+		terminate = false;
 		repaint();
 	}
 	
@@ -133,14 +229,20 @@ class GomokuPanel extends JPanel {
 		@Override
 		protected Boolean doInBackground() throws Exception {
 			try {
-				if (working) {
+				if (working || terminate) {
 					System.out.println("Error: Shouldn't populate a new thread.");
 					return false;
 				}
 				working = true;
 				Location loc = gomokuAI.calculateNextMove(board, playerLastMove);
+				setIgnoreRepaint(false);
 				board.placeAtLocation(loc.i, loc.j, Board.opponentOf(identity));
+				playerLastMove = loc;
 				repaint();
+				if (Math.abs(gomokuAI.getEvaluator().evaluateBoard(board, loc)) > 10000) {
+					terminate = true;
+					JOptionPane.showMessageDialog(null, "Computer Wins!");
+				}
 				return true;
 			} catch (Exception failure) {
 				working = false;
@@ -159,7 +261,7 @@ class GomokuPanel extends JPanel {
 	class GomokuListener extends MouseAdapter {
 
 		public void mouseReleased(MouseEvent e) {
-			if (working) {
+			if (working || terminate) {
 				return;
 			}
 
@@ -175,6 +277,12 @@ class GomokuPanel extends JPanel {
 			board.placeAtLocation(row, col, identity);
 			playerLastMove = new Location(row, col);
 			repaint();
+			int score = Math.abs(gomokuAI.getEvaluator().evaluateBoard(board, playerLastMove)); 
+			// System.out.println("Score = " + score);
+			if (score > 10000) {
+				terminate = true;
+				JOptionPane.showMessageDialog(null, "You Win!");
+			}
 			if (!testMode) {
 				new AIWorker().execute();
 			} else {
@@ -222,7 +330,11 @@ class GomokuPanel extends JPanel {
 							pieceDiameter, 
 							pieceDiameter);
 					g2.fill(circle);
-					g2.setColor(Color.black);
+					if (playerLastMove.i == row && playerLastMove.j == col) {
+						g2.setColor(Color.RED);
+					} else {
+						g2.setColor(Color.black);
+					}
 					g2.draw(circle);
 				}
 			}

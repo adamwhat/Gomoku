@@ -10,13 +10,12 @@ public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
 	private int maxLevel = 5;
-	public static final int MAX_CANDIDATE_LOCATIONS = 12;
-	private volatile boolean draw = false;
+	private int maxCandidateLocations = 12;
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
 	private int edgeStyleId;
 	private Evaluate evaluator;
-	private static final int threshold = -200;
+	// private static final int threshold = -200;
 
 	UbigraphClient visualClient = new UbigraphClient();
 
@@ -29,15 +28,54 @@ public class GomokuAI {
 		return evaluator;
 	}
 	
+
+	public int getMaxCandidateLocations() {
+		return maxCandidateLocations;
+	}
+
+	public void setMaxCandidateLocations(int maxCandidateLocations) {
+		this.maxCandidateLocations = maxCandidateLocations;
+	}
+
+	private volatile boolean draw = false;
+
+	public int getMaxLevel() {
+		return maxLevel;
+	}
+
+	public void setMaxLevel(int maxLevel) {
+		this.maxLevel = maxLevel;
+	}
+
+	public boolean isDraw() {
+		return draw;
+	}
+
+	public void setDraw(boolean draw) {
+		this.draw = draw;
+	}
+
+	public boolean isDrawFullTree() {
+		return drawFullTree;
+	}
+
+	public void setDrawFullTree(boolean drawFullTree) {
+		this.drawFullTree = drawFullTree;
+	}
+
 	private List<Location> getFeasibleLocations(Board board, int number,
 			Location lastMove) {
 		return getFeasibleLocations(board, number, lastMove, true);
 	}
 	
+	public void prune() {
+		// TODO
+	}
+	
 	private List<Location> getFeasibleLocations(Board board, int number,
 			Location lastMove, boolean alwaysDefend) {
 		/* Defend first */
-		List<Location> defend = new ArrayList<>();
+		List<Location> defend = new ArrayList<>(number);
 		List<Location> attack = new ArrayList<>();
 		List<Location> vacant = new ArrayList<>();
 		BoardState opponent = Board.opponentOf(myIdentity);
@@ -123,13 +161,12 @@ public class GomokuAI {
 			visualClient.clear();
 			edgeStyleId = visualClient.newEdgeStyle(0);
 			visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
-
 			root = drawVertex(shapeFromTurn(myIdentity), "#FF0000", null);
 		}
 		double maximum_score = Double.NEGATIVE_INFINITY;
 		Location maximum_loc = null;
 		Board newBoard = board.clone();
-		for (Location l : getFeasibleLocations(newBoard, MAX_CANDIDATE_LOCATIONS,
+		for (Location l : getFeasibleLocations(newBoard, maxCandidateLocations,
 				opponentMove)) {
 			newBoard.setLocation(l, myIdentity);
 			double score = evaluate(newBoard, Board.opponentOf(myIdentity),
@@ -192,7 +229,7 @@ public class GomokuAI {
 		if (turn == myIdentity) {
 			// Maximizer
 			for (Location l : getFeasibleLocations(board,
-					MAX_CANDIDATE_LOCATIONS, lastMove)) {
+					maxCandidateLocations, lastMove)) {
 				if (alpha >= beta) {
 					if (!draw || !drawFullTree) {
 						break;
@@ -209,7 +246,7 @@ public class GomokuAI {
 		} else {
 			// Minimizer
 			for (Location l : getFeasibleLocations(board,
-					MAX_CANDIDATE_LOCATIONS, lastMove)) {
+					maxCandidateLocations, lastMove)) {
 				if (alpha >= beta) {
 					break;
 				}
