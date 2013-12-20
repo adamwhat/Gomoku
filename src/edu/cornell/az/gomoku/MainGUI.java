@@ -88,12 +88,15 @@ public class MainGUI {
 				}
 			}
 			System.out.println("Statistics");
-			System.out.format("%s l:%s bf:%s\n", args[0], args[2], args[3]);
-			System.out.format("%d %d\n", ai1_win_first, ai1_win_second);
-			System.out.format("%s l:%s bf:%s\n", args[1], args[4], args[5]);
-			System.out.format("%d %d\n", ai2_win_first, ai2_win_second);
-			System.out.format("%s used %d s\n%s used %d s\n", args[0], time1, args[1], time2);
-			
+			System.out.format("%s Level:%s BF:%s\n", args[0], args[2], args[3]);
+			System.out.format("First Win: %d Second Win: %d\n", ai1_win_first, ai1_win_second);
+			System.out.format("%s Level:%s BF:%s\n", args[1], args[4], args[5]);
+			System.out.format("First Win: %d Second Win: %d\n", ai2_win_first, ai2_win_second);
+			System.out.format("%s(%s, %s) used %d ms\n%s(%s, %s) used %d ms\n", 
+								args[0], args[2], args[3], time1, 
+								args[1], args[4], args[5], time2);
+			System.out.format("1 & %d & %d\n2 & %d & %d\n", ai1_win_first, ai1_win_second,
+														    ai2_win_first, ai2_win_second);
 		}
 
 	}
