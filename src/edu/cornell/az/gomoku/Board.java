@@ -25,7 +25,7 @@ class Location {
 }
 
 public class Board {
-	public static final int BOARD_SIZE = 19;
+	public static final int BOARD_SIZE = 15;
 
 	private BoardState[][] board;
 	

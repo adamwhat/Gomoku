@@ -79,7 +79,7 @@ public class MainGUI {
 		JPanel visPanel = new JPanel();
 		// visPanel.setLayout(new BoxLayout(visPanel, BoxLayout.Y_AXIS));
 		visPanel.setLayout(new GridLayout(0, 1));
-		JSlider bFactor = new JSlider(0, 20, panel.getGomokuAI().getMaxCandidateLocations());
+		JSlider bFactor = new JSlider(0, 30, panel.getGomokuAI().getMaxCandidateLocations());
 		bFactor.setBorder(BorderFactory.createTitledBorder("Max Branching Factor"));
 		bFactor.addChangeListener(new ChangeListener() {
 			@Override
@@ -87,7 +87,7 @@ public class MainGUI {
 				panel.getGomokuAI().setMaxCandidateLocations(((JSlider)(e.getSource())).getValue());
 			}
 		});
-		bFactor.setMajorTickSpacing(5);
+		bFactor.setMajorTickSpacing(10);
 		bFactor.setMinorTickSpacing(1);
 		bFactor.setPaintTicks(true);
 		bFactor.setPaintLabels(true);

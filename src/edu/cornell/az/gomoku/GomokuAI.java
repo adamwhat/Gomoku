@@ -1,14 +1,13 @@
 package edu.cornell.az.gomoku;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.ubiety.ubigraph.UbigraphClient;
 
 public class GomokuAI {
 	private BoardState myIdentity;
-	private List<Location> moves = new ArrayList<>();
+	// private List<Location> moves = new ArrayList<>();
 	private volatile int maxLevel = 5;
 	private volatile int maxCandidateLocations = 12;
 	private volatile boolean drawFullTree = false;
@@ -65,12 +64,18 @@ public class GomokuAI {
 
 	private List<Location> getFeasibleLocations(Board board, int number,
 			Location lastMove) {
-		return getFeasibleLocations(board, number, lastMove, true);
+		return getFeasibleLocations(board, number, lastMove, false);
 	}
 	
 	public void prune() {
 		for (int i=shouldPrune.size()-1;i>=0;i--) {
-			visualClient.removeVertex(shouldPrune.get(i));
+			int vId = shouldPrune.get(i);
+			visualClient.setVertexAttribute(vId, "color", "#D0F16C");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			visualClient.removeVertex(vId);
 		}
 	}
 	
@@ -165,6 +170,7 @@ public class GomokuAI {
 			edgeStyleId = visualClient.newEdgeStyle(0);
 			visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
 			root = drawVertex(shapeFromTurn(myIdentity), "#FF0000", null);
+			visualClient.setVertexAttribute(root, "size", "4.0");
 		}
 		double maximum_score = Double.NEGATIVE_INFINITY;
 		Location maximum_loc = null;
@@ -211,6 +217,14 @@ public class GomokuAI {
 			return "sphere";
 		}
 	}
+	
+	private String colorFromTurn(BoardState turn) {
+		if (turn != myIdentity) {
+			return "#00A0B0";
+		} else {
+			return "#EB6841";
+		}
+	}
 
 	private double evaluate(Board board, BoardState turn, Location lastMove,
 			double alpha, double beta, int level, int parent) {
@@ -218,14 +232,14 @@ public class GomokuAI {
 		int currentNode = parent;
 		if (draw) {
 			currentNode = createAndConnect(parent, shapeFromTurn(turn),
-					null, null);
+					colorFromTurn(turn), null);
 			if (drawFullTree && alpha >= beta) {
 				shouldPrune.add(currentNode);
 			}
 		}
 
 		int res = evaluator.evaluateBoard(board, lastMove);
-		if (level == maxLevel || Math.abs(res) > 5000) {
+		if (level >= maxLevel || Math.abs(res) > 5000) {
 			return res;
 		}
 
