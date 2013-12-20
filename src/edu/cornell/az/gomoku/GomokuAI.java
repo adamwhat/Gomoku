@@ -12,7 +12,7 @@ public class GomokuAI {
 	private int maxLevel = 5;
 	private int maxCandidateLocations = 12;
 	private volatile boolean drawFullTree = false;
-	private List<Integer> shouldPrune = new LinkedList<>();
+	private ArrayList<Integer> shouldPrune = new ArrayList<>();
 	private int edgeStyleId;
 	private Evaluate evaluator;
 	// private static final int threshold = -200;
@@ -69,7 +69,9 @@ public class GomokuAI {
 	}
 	
 	public void prune() {
-		// TODO
+		for (int i=shouldPrune.size()-1;i>=0;i--) {
+			visualClient.removeVertex(shouldPrune.get(i));
+		}
 	}
 	
 	private List<Location> getFeasibleLocations(Board board, int number,
@@ -155,6 +157,7 @@ public class GomokuAI {
 	*/
 
 	public Location calculateNextMove(Board board, Location opponentMove) {
+		shouldPrune.clear();
 		// TODO opponentMove could be null
 		int root = 0;
 		if (draw) {
