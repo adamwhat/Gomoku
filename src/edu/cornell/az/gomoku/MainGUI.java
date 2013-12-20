@@ -31,14 +31,14 @@ public class MainGUI {
 			public void actionPerformed(ActionEvent e) {
 				panel.saveBoard();
 			}});
-		saveButton.setMaximumSize(new Dimension(BUTTON_WIDTH, saveButton.getMinimumSize().height));
+		// saveButton.setMaximumSize(new Dimension(BUTTON_WIDTH, saveButton.getMinimumSize().height));
 		JButton clearButton = new JButton("Clear Board");
 		clearButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.clearBoard();
 			}});
-		clearButton.setMaximumSize(new Dimension(BUTTON_WIDTH, clearButton.getMinimumSize().height));
+		// clearButton.setMaximumSize(new Dimension(BUTTON_WIDTH, clearButton.getMinimumSize().height));
 		JButton constructBoardButton = new JButton("Construct");
 		constructBoardButton.addActionListener(new ActionListener() {
 			@Override
@@ -47,7 +47,7 @@ public class MainGUI {
 				panel.constructBoardFromString(s);
 			}
 		});
-		constructBoardButton.setMaximumSize(new Dimension(BUTTON_WIDTH, constructBoardButton.getMinimumSize().height));
+		// constructBoardButton.setMaximumSize(new Dimension(BUTTON_WIDTH, constructBoardButton.getMinimumSize().height));
 		
 		JCheckBox cbox = new JCheckBox("Test Mode");
 		cbox.addItemListener(new ItemListener() {
@@ -56,7 +56,7 @@ public class MainGUI {
 				panel.setTestMode(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-		cbox.setMaximumSize(new Dimension(BUTTON_WIDTH, cbox.getMinimumSize().height));
+		// cbox.setMaximumSize(new Dimension(BUTTON_WIDTH, cbox.getMinimumSize().height));
 		// cbox.setSelected(true);
 		
 		JButton evaluateButton = new JButton("Evaluate");
@@ -66,9 +66,9 @@ public class MainGUI {
 				panel.evaluateBoard();
 			}
 		});
-		evaluateButton.setMaximumSize(new Dimension(BUTTON_WIDTH, evaluateButton.getMinimumSize().height));
+		// evaluateButton.setMaximumSize(new Dimension(BUTTON_WIDTH, evaluateButton.getMinimumSize().height));
 		
-		testPanel.setLayout(new BoxLayout(testPanel, BoxLayout.Y_AXIS));
+		testPanel.setLayout(new GridLayout(0, 1));
 		testPanel.add(saveButton);
 		testPanel.add(clearButton);
 		testPanel.add(constructBoardButton);
@@ -77,7 +77,8 @@ public class MainGUI {
 		testPanel.setBorder(BorderFactory.createTitledBorder("Test"));
 		
 		JPanel visPanel = new JPanel();
-		visPanel.setLayout(new BoxLayout(visPanel, BoxLayout.Y_AXIS));
+		// visPanel.setLayout(new BoxLayout(visPanel, BoxLayout.Y_AXIS));
+		visPanel.setLayout(new GridLayout(0, 1));
 		JSlider bFactor = new JSlider(0, 20, panel.getGomokuAI().getMaxCandidateLocations());
 		bFactor.setBorder(BorderFactory.createTitledBorder("Max Branching Factor"));
 		bFactor.addChangeListener(new ChangeListener() {
