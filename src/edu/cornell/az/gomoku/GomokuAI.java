@@ -11,7 +11,7 @@ public class GomokuAI {
 	private List<Location> moves = new ArrayList<>();
 	private int maxLevel = 1;
 	public static final int MAX_CANDIDATE_LOCATIONS = 20;
-	private volatile boolean draw = true;
+	private volatile boolean draw = false;
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
 	private int edgeStyleId;
@@ -63,22 +63,22 @@ public class GomokuAI {
 			edgeStyleId = visualClient.newEdgeStyle(0);
 			visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
 			visualClient.setEdgeStyleAttribute(edgeStyleId, "stroke", "dashed");
-			
 			root = drawVertex(shapeFromTurn(myIdentity), "#FF0000", null);
 		}
 		double maximum_score = Double.NEGATIVE_INFINITY;
 		Location maximum_loc = null;
-		for (Location l : getFeasibleLocations(board, MAX_CANDIDATE_LOCATIONS,
+		Board newBoard = board.clone();
+		for (Location l : getFeasibleLocations(newBoard, MAX_CANDIDATE_LOCATIONS,
 				opponentMove)) {
-			board.setLocation(l, myIdentity);
-			double score = evaluate(board, Board.opponentOf(myIdentity),
+			newBoard.setLocation(l, myIdentity);
+			double score = evaluate(newBoard, Board.opponentOf(myIdentity),
 					l, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, maxLevel, root);
 			if (score > maximum_score) {
 				maximum_score = score;
 				maximum_loc = l;
 			}
-			board.setLocation(l, BoardState.EMPTY);
+			newBoard.setLocation(l, BoardState.EMPTY);
 		}
 		System.out.println("Max_Score = " + maximum_score);
 		return maximum_loc;

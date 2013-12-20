@@ -36,6 +36,13 @@ public class Board {
 		}
 	}
 	
+	public Board clone() {
+		Board res = new Board();
+		for (int i = 0; i < BOARD_SIZE; i++)
+			for (int j = 0; j < BOARD_SIZE; j++)
+				res.setLocation(i, j, board[i][j]);
+		return res;
+	}
 	public Board(String cmd) {
 		this();
 		Board.setBoard(this, cmd);
