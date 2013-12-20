@@ -1,6 +1,8 @@
 package edu.cornell.az.gomoku;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -12,9 +14,11 @@ public class GomokuAI {
 	private volatile int maxLevel = 5;
 	private volatile int maxCandidateLocations = 12;
 	private volatile boolean drawFullTree = false;
+	private volatile boolean defend = false;
 	private ArrayList<Integer> shouldPrune = new ArrayList<>();
 	private int edgeStyleId;
 	private Evaluate evaluator;
+	private boolean cmdEntry = false;
 	// private static final int threshold = -200;
 
 	UbigraphClient visualClient = new UbigraphClient();
@@ -27,6 +31,7 @@ public class GomokuAI {
 	public GomokuAI(BoardState me, Evaluate eval) {
 		myIdentity = me;
 		evaluator = eval;
+		cmdEntry = true;
 	}
 	
 	public BoardState getMyIdentity() {
@@ -49,6 +54,14 @@ public class GomokuAI {
 
 	public void setMaxCandidateLocations(int maxCandidateLocations) {
 		this.maxCandidateLocations = maxCandidateLocations;
+	}
+
+	public boolean isDefend() {
+		return defend;
+	}
+
+	public void setDefend(boolean defend) {
+		this.defend = defend;
 	}
 
 	private volatile boolean draw = false;
@@ -79,7 +92,7 @@ public class GomokuAI {
 
 	private List<Location> getFeasibleLocations(Board board, int number,
 			Location lastMove) {
-		return getFeasibleLocations(board, number, lastMove, false);
+		return getFeasibleLocations(board, number, lastMove, defend);
 	}
 	
 	public void prune() {
@@ -177,7 +190,6 @@ public class GomokuAI {
 	*/
 
 	public Location calculateNextMove(Board board, Location opponentMove) {
-		Random random = new Random();
 		shouldPrune.clear();
 		// TODO opponentMove could be null
 		int root = 0;
@@ -191,13 +203,16 @@ public class GomokuAI {
 		double maximum_score = Double.NEGATIVE_INFINITY;
 		Location maximum_loc = null;
 		Board newBoard = board.clone();
-		for (Location l : getFeasibleLocations(newBoard, maxCandidateLocations,
-				opponentMove)) {
+		List<Location> feasibleLocs = getFeasibleLocations(newBoard, maxCandidateLocations, opponentMove);
+		if (cmdEntry) {
+			Collections.shuffle(feasibleLocs);
+		}
+		for (Location l : feasibleLocs) {
 			newBoard.setLocation(l, myIdentity);
 			double score = evaluate(newBoard, Board.opponentOf(myIdentity),
 					l, Double.NEGATIVE_INFINITY,
 					Double.POSITIVE_INFINITY, 0, root);
-			if (score > maximum_score || (score == maximum_score && random.nextInt() % 10 > 6)) {
+			if (score > maximum_score) {
 				maximum_score = score;
 				maximum_loc = l;
 			}

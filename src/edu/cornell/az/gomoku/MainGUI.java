@@ -272,6 +272,15 @@ public class MainGUI {
 		});
 		enableVis.setMaximumSize(new Dimension(BUTTON_WIDTH, enableVis.getMinimumSize().height));
 		
+		final JCheckBox alwaysDefend = new JCheckBox("Defend Strategy");
+		alwaysDefend.setSelected(panel.getGomokuAI().isDefend());
+		drawFullTreeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.getGomokuAI().setDefend(((JCheckBox)(e.getSource())).isSelected());
+			}
+		});
+		
 		visPanel.add(enableVis);
 		visPanel.add(drawFullTreeButton);
 		visPanel.add(ABPrune);
@@ -280,7 +289,7 @@ public class MainGUI {
 		visPanel.setBorder(BorderFactory.createTitledBorder("Visualization"));
 		visPanel.setSize(120, visPanel.getMinimumSize().height);
 
-		
+		testPanel.add(alwaysDefend);
 		JPanel sidePanel = new JPanel();
 		sidePanel.setLayout(new GridLayout(0, 1));
 		sidePanel.add(visPanel);
