@@ -57,12 +57,13 @@ public class GomokuAI {
 
 	public Location calculateNextMove(Board board, Location opponentMove) {
 		// TODO opponentMove could be null
-		visualClient.clear();
-		edgeStyleId = visualClient.newEdgeStyle(0);
-		visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
-		visualClient.setEdgeStyleAttribute(edgeStyleId, "stroke", "dashed");
 		int root = 0;
 		if (draw) {
+			visualClient.clear();
+			edgeStyleId = visualClient.newEdgeStyle(0);
+			visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
+			visualClient.setEdgeStyleAttribute(edgeStyleId, "stroke", "dashed");
+			
 			root = drawVertex(shapeFromTurn(myIdentity), "#FF0000", null);
 		}
 		double maximum_score = Double.NEGATIVE_INFINITY;
