@@ -9,8 +9,8 @@ import org.ubiety.ubigraph.UbigraphClient;
 public class GomokuAI {
 	private BoardState myIdentity;
 	private List<Location> moves = new ArrayList<>();
-	private int maxLevel = 1;
-	public static final int MAX_CANDIDATE_LOCATIONS = 20;
+	private int maxLevel = 5;
+	public static final int MAX_CANDIDATE_LOCATIONS = 12;
 	private volatile boolean draw = false;
 	private volatile boolean drawFullTree = false;
 	private List<Integer> shouldPrune = new LinkedList<>();
@@ -28,7 +28,67 @@ public class GomokuAI {
 	public Evaluate getEvaluator() {
 		return evaluator;
 	}
-
+	
+	private List<Location> getFeasibleLocations(Board board, int number,
+			Location lastMove) {
+		return getFeasibleLocations(board, number, lastMove, true);
+	}
+	
+	private List<Location> getFeasibleLocations(Board board, int number,
+			Location lastMove, boolean alwaysDefend) {
+		/* Defend first */
+		List<Location> defend = new ArrayList<>();
+		List<Location> attack = new ArrayList<>();
+		List<Location> vacant = new ArrayList<>();
+		BoardState opponent = Board.opponentOf(myIdentity);
+		int[] di = new int[] { -1, -1, -1, 0, 0, 1, 1, 1 };
+		int[] dj = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
+		for (int i=0;i<Board.BOARD_SIZE;i++) {
+			for (int j=0;j<Board.BOARD_SIZE;j++) {
+				if (board.getLocation(i, j) == BoardState.EMPTY) {
+					Location cur = new Location(i, j);
+					boolean mark = false;
+					for (int k=0;k<di.length;k++) {
+						int ni = i+di[k];
+						int nj = j+dj[k];
+						if (Board.onBoard(ni, nj)) {
+							if (board.getLocation(ni, nj) == opponent) {
+								defend.add(cur);
+								mark = true;
+								break;
+							} else if (board.getLocation(ni, nj) == myIdentity) {
+								attack.add(cur);
+								mark = true;
+								break;
+							}
+						}
+					}
+					if (!mark) {
+						vacant.add(cur);
+					}
+				}
+			}
+		}
+		for (Location l : attack) {
+			if (defend.size() >= number) {
+				break;
+			}
+			defend.add(l);
+		}
+		for (Location l : vacant) {
+			if (defend.size() >= number) {
+				break;
+			}
+			defend.add(l);
+		}
+		if (!alwaysDefend && defend.size() > number) {
+			return defend.subList(0, number);
+		} else {
+			return defend;
+		}
+	}
+	
+	/*
 	private List<Location> getFeasibleLocations(Board board, int number,
 			Location lastMove) {
 		ArrayList<Location> locs = new ArrayList<>();
@@ -54,6 +114,7 @@ public class GomokuAI {
 
 		return locs;
 	}
+	*/
 
 	public Location calculateNextMove(Board board, Location opponentMove) {
 		// TODO opponentMove could be null
@@ -62,7 +123,7 @@ public class GomokuAI {
 			visualClient.clear();
 			edgeStyleId = visualClient.newEdgeStyle(0);
 			visualClient.setEdgeStyleAttribute(edgeStyleId, "oriented", "true");
-			visualClient.setEdgeStyleAttribute(edgeStyleId, "stroke", "dashed");
+
 			root = drawVertex(shapeFromTurn(myIdentity), "#FF0000", null);
 		}
 		double maximum_score = Double.NEGATIVE_INFINITY;
@@ -116,21 +177,15 @@ public class GomokuAI {
 		// Connect current node to parent
 		int currentNode = parent;
 		if (draw) {
-			currentNode = createAndConnect(currentNode, shapeFromTurn(turn),
+			currentNode = createAndConnect(parent, shapeFromTurn(turn),
 					null, null);
 			if (drawFullTree && alpha >= beta) {
 				shouldPrune.add(currentNode);
 			}
 		}
-		if (level == 0) {
-			int res = evaluator.evaluateBoard(board, lastMove);
-			// System.out.println(res);
-			return res;
-		}
-
 
 		int res = evaluator.evaluateBoard(board, lastMove);
-		if (Math.abs(res) > 5000) {
+		if (level == 0 || Math.abs(res) > 5000) {
 			return res;
 		}
 
