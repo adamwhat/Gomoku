@@ -26,6 +26,7 @@ public class GomokuAI {
 	public GomokuAI(BoardState me) {
 		myIdentity = me;
 		evaluator = new EvaluateNaive(me);
+		defend = false;
 	}
 	
 	public GomokuAI(BoardState me, Evaluate eval) {

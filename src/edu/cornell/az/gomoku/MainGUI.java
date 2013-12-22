@@ -274,7 +274,7 @@ public class MainGUI {
 		
 		final JCheckBox alwaysDefend = new JCheckBox("Defend Strategy");
 		alwaysDefend.setSelected(panel.getGomokuAI().isDefend());
-		drawFullTreeButton.addActionListener(new ActionListener() {
+		alwaysDefend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.getGomokuAI().setDefend(((JCheckBox)(e.getSource())).isSelected());
