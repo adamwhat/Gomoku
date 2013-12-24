@@ -46,7 +46,7 @@ public class Evaluate {
 		assert(b.getLocation(loc) != BoardState.EMPTY);
 		int[] s = new int[6];
 		int[] h = new int[6];
-		int[] score = new int[] {100000, 10000, 5000, 1000, 500, 200, 100, 50, 10, 5, 3, 0};
+		int[] score = new int[] {10000000, 10000, 5000, 1000, 500, 200, 100, 50, 10, 5, 3, 0};
 
 		for (int i = 0; i < DX.length; i++) {
 			BoardStats stats = count(b, loc, DX[i], DY[i], b.getLocation(loc));

@@ -8,7 +8,7 @@ public class EvaluateNaive extends Evaluate {
 	
 	private int getScores(int[][] tally) {
 		int score = 0;
-		if (tally[5][0] > 0 || tally[5][1] > 0) score = 100000;
+		if (tally[5][0] > 0 || tally[5][1] > 0) score = 10000000;
 		else if (tally[4][1] > 0 || tally[4][0] > 1 || (tally[4][0] > 0 && tally[3][1] > 0)) score = 10000;
 		else if (tally[3][1] > 1) score = 5000;
 		else if (tally[3][0] > 0 && tally[3][1] > 0) score = 1000;

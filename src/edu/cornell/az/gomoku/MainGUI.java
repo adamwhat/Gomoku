@@ -10,6 +10,9 @@ import javax.swing.event.ChangeListener;
 
 import java.util.*;
 
+import java.awt.datatransfer.*;
+import java.awt.Toolkit;
+
 public class MainGUI {
 	
 	/**
@@ -308,6 +311,7 @@ public class MainGUI {
 }
 
 class GomokuPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private final int MARGIN = 2;
 	private final double PIECE_FRAC = 0.9;
 
@@ -317,11 +321,8 @@ class GomokuPanel extends JPanel {
 	private boolean working;
 	private GomokuAI gomokuAI;
 
-	private boolean terminate;
-	
+	private boolean terminate = false;
 	private boolean testMode = false;
-
-	private Random random = new Random();
 
 
 	public GomokuPanel(BoardState identity) {
@@ -355,12 +356,23 @@ class GomokuPanel extends JPanel {
 	}
 	
 	public void saveBoard() {
+		String res = board.toString();
+		JOptionPane.showMessageDialog(null, res);
+		
+		StringSelection stringSelection = new StringSelection (res);
+		Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
+		clpbrd.setContents (stringSelection, null);
+		
 		System.out.println(board);
 	}
 
 	public void clearBoard() {
 		board.clear();
+		this.identity = BoardState.BLACK;
 		terminate = false;
+		working = false;
+		playerLastMove = null;
+		gomokuAI = new GomokuAI(Board.opponentOf(identity));
 		repaint();
 	}
 	
@@ -369,9 +381,11 @@ class GomokuPanel extends JPanel {
 			return;
 		}
 		int res = gomokuAI.getEvaluator().evaluateBoard(board, playerLastMove);
-		System.out.println("PlayerLastMove = " + playerLastMove);
-		System.out.println("Color = " + (board.getLocation(playerLastMove) == BoardState.BLACK?"Black":"White"));
-		System.out.println("Score = " + res);
+		String ret = "PlayerLastMove = " + playerLastMove + "\n" + 
+					 "Color = " + (board.getLocation(playerLastMove) == BoardState.BLACK?"Black":"White") + "\n"+
+					 "Score = " + res;
+		System.out.println(ret);
+		JOptionPane.showMessageDialog(null, ret);
 	}
 
 	class AIWorker extends SwingWorker<Boolean, String> {
@@ -418,7 +432,7 @@ class GomokuPanel extends JPanel {
 			double panelHeight = getHeight();
 			double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
 			double squareWidth = boardWidth / Board.BOARD_SIZE;
-			double pieceDiameter = PIECE_FRAC * squareWidth;
+			// double pieceDiameter = PIECE_FRAC * squareWidth;
 			double xLeft = (panelWidth - boardWidth) / 2 + MARGIN;
 			double yTop = (panelHeight - boardWidth) / 2 + MARGIN;
 			int col = (int) Math.round((e.getX() - xLeft) / squareWidth - 0.5);

@@ -1,10 +1,8 @@
 package edu.cornell.az.gomoku;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import org.ubiety.ubigraph.UbigraphClient;
 
